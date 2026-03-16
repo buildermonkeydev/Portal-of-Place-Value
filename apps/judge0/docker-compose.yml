@@ -1,0 +1,82 @@
+x-logging: &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100M
+
+services:
+  server:
+    image: judge0/judge0:1.13.1
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+      - box:/box
+    ports:
+      - "2358:2358"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=judge0
+      - POSTGRES_PASSWORD=supersecret
+      - POSTGRES_DB=judge0
+      - DATABASE_URL=postgresql://judge0:supersecret@db:5432/judge0
+      - RAILS_MAX_THREADS=5
+      - DISABLE_CGROUPS=true
+      - USE_CGROUPS=false
+      - CG_ENABLE=false
+      - ENABLE_COMPILE_OUTPUT=true
+      - MAX_COMPILE_OUTPUT_SIZE=65536
+      - ENABLE_STDERR=true
+      - MAX_STDERR_SIZE=65536
+      - ENABLE_MESSAGE=true
+    privileged: true
+    <<: *default-logging
+    restart: always
+
+  workers:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - box:/box
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=judge0
+      - POSTGRES_PASSWORD=supersecret
+      - POSTGRES_DB=judge0
+      - DATABASE_URL=postgresql://judge0:supersecret@db:5432/judge0
+      - RAILS_MAX_THREADS=5
+      - DISABLE_CGROUPS=true
+      - USE_CGROUPS=false
+      - CG_ENABLE=false
+      - ENABLE_COMPILE_OUTPUT=true
+      - MAX_COMPILE_OUTPUT_SIZE=65536
+      - ENABLE_STDERR=true
+      - MAX_STDERR_SIZE=65536
+      - ENABLE_MESSAGE=true
+    privileged: true
+    <<: *default-logging
+    restart: always
+
+  db:
+    image: postgres:16.2
+    env_file: judge0.conf
+    volumes:
+      - data:/var/lib/postgresql/data/
+    <<: *default-logging
+    restart: always
+
+  redis:
+    image: redis:7.2.4
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly no --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: judge0.conf
+    <<: *default-logging
+    restart: always
+
+volumes:
+  data:
+  box:

@@ -1,0 +1,202 @@
+x-logging:
+  &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100M
+
+services:
+  # Judge0 API Server (4 processes for high concurrency)
+  server:
+    image: judge0/judge0:1.13.1
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    ports:
+      - "2358:2358"
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - RAILS_SERVER_PROCESSES=4  # 4 API processes
+      - RAILS_MAX_THREADS=10      # 10 threads per process
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  # Judge0 Workers (8 instances for high performance)
+  worker-1:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=1
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-2:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=2
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-3:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=3
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-4:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=4
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-5:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=5
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-6:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=6
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-7:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=7
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  worker-8:
+    image: judge0/judge0:1.13.1
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0-optimized.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    environment:
+      - WORKER_ID=8
+    depends_on:
+      - db
+      - redis
+    networks:
+      - judge0-network
+
+  # PostgreSQL Database (optimized for high load)
+  db:
+    image: postgres:16.2
+    env_file: judge0-optimized.conf
+    volumes:
+      - judge0_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=judge0
+      - POSTGRES_USER=judge0
+      - POSTGRES_PASSWORD=supersecret
+      # Performance optimizations
+      - POSTGRES_SHARED_BUFFERS=1GB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=4GB
+      - POSTGRES_MAINTENANCE_WORK_MEM=256MB
+      - POSTGRES_CHECKPOINT_COMPLETION_TARGET=0.9
+      - POSTGRES_WAL_BUFFERS=16MB
+      - POSTGRES_DEFAULT_STATISTICS_TARGET=100
+    <<: *default-logging
+    restart: always
+    networks:
+      - judge0-network
+
+  # Redis (optimized for high concurrency)
+  redis:
+    image: redis:7.2.4
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD" --maxmemory 2gb --maxmemory-policy allkeys-lru --tcp-keepalive 60'
+    ]
+    env_file: judge0-optimized.conf
+    volumes:
+      - redis_data:/data
+    <<: *default-logging
+    restart: always
+    networks:
+      - judge0-network
+
+volumes:
+  judge0_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  judge0-network:
+    driver: bridge

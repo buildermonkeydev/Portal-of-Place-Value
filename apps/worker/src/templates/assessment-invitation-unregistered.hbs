@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Invitation - {{assessmentTitle}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        
+        .registration-notice {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .registration-notice h2 {
+            color: #1e40af;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .registration-notice p {
+            color: #1e40af;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .assessment-card {
+            background-color: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .assessment-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .assessment-details {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .detail-item strong {
+            color: #374151;
+            margin-right: 8px;
+            min-width: 80px;
+        }
+        
+        .assessment-description {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .instruction {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instruction h3 {
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .instruction p {
+            color: #92400e;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            margin: 24px 0;
+            transition: transform 0.2s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .secondary-button {
+            display: inline-block;
+            background-color: #f3f4f6;
+            color: #374151;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            margin-left: 12px;
+            border: 1px solid #d1d5db;
+        }
+        
+        .steps {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .steps h3 {
+            color: #0c4a6e;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: white;
+            border-radius: 6px;
+            border: 1px solid #e0f2fe;
+        }
+        
+        .step-number {
+            background-color: #0ea5e9;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h4 {
+            color: #0c4a6e;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .step-content p {
+            color: #0369a1;
+            font-size: 13px;
+            margin: 0;
+        }
+        
+        .footer {
+            background-color: #f9fafb;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .footer p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .footer a {
+            color: #10b981;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .urgency-badge {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .deadline-warning {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .deadline-warning h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .deadline-warning p {
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .benefits {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .benefits h3 {
+            color: #166534;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .benefits ul {
+            color: #15803d;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header, .content, .footer {
+                padding: 20px;
+            }
+            
+            .assessment-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-button, .secondary-button {
+                display: block;
+                margin: 12px 0;
+                text-align: center;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-number {
+                margin: 0 auto 8px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Assessment Invitation</h1>
+            <p>You've been invited to take an assessment</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hello there,
+            </div>
+            
+            <p>You have been invited to participate in an assessment. To take this assessment, you'll need to create an account first.</p>
+            
+            <!-- Registration Notice -->
+            <div class="registration-notice">
+                <h2>🔐 Registration Required</h2>
+                <p>You need to create an account to access this assessment. It only takes a few minutes!</p>
+            </div>
+            
+            <!-- Urgency Badge -->
+            {{#if endDate}}
+            <div class="urgency-badge">
+                ⏰ Deadline: {{formatDate endDate}}
+            </div>
+            {{/if}}
+            
+            <!-- Assessment Card -->
+            <div class="assessment-card">
+                <div class="assessment-title">{{assessmentTitle}}</div>
+                
+                {{#if assessmentDescription}}
+                <div class="assessment-description">
+                    {{assessmentDescription}}
+                </div>
+                {{/if}}
+                
+                <div class="assessment-details">
+                    <div class="detail-item">
+                        <strong>Type:</strong>
+                        <span>{{assessmentType}}</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <strong>Duration:</strong>
+                        <span>{{duration}} minutes</span>
+                    </div>
+                    
+                    {{#if totalMarks}}
+                    <div class="detail-item">
+                        <strong>Total Marks:</strong>
+                        <span>{{totalMarks}}</span>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if totalQuestions}}
+                    <div class="detail-item">
+                        <strong>Questions:</strong>
+                        <span>{{totalQuestions}}</span>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if startDate}}
+                    <div class="detail-item">
+                        <strong>Start Date:</strong>
+                        <span>{{formatDate startDate}}</span>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if endDate}}
+                    <div class="detail-item">
+                        <strong>End Date:</strong>
+                        <span>{{formatDate endDate}}</span>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if collegeName}}
+                    <div class="detail-item">
+                        <strong>College:</strong>
+                        <span>{{collegeName}}</span>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if courseName}}
+                    <div class="detail-item">
+                        <strong>Course:</strong>
+                        <span>{{courseName}}</span>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if year}}
+                    <div class="detail-item">
+                        <strong>Year:</strong>
+                        <span>{{year}}</span>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            {{#if instruction}}
+            <div class="instruction">
+                <h3>📋 Important Instructions</h3>
+                <p>{{instruction}}</p>
+            </div>
+            {{/if}}
+            
+            <!-- Steps to Get Started -->
+            <div class="steps">
+                <h3>🚀 How to Get Started</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Create Your Account</h4>
+                        <p>Click the "Register Now" button below to create your free account</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Verify Your Email</h4>
+                        <p>Check your email and click the verification link to activate your account</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Take the Assessment</h4>
+                        <p>Once verified, you can access and complete the assessment</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Benefits -->
+            <div class="benefits">
+                <h3>✨ Why Join {{appName}}?</h3>
+                <ul>
+                    <li>Access to exclusive assessments and challenges</li>
+                    <li>Track your progress and performance</li>
+                    <li>Connect with peers and mentors</li>
+                    <li>Get personalized recommendations</li>
+                    <li>Build your professional portfolio</li>
+                </ul>
+            </div>
+            
+            <!-- Deadline Warning -->
+            {{#if endDate}}
+            <div class="deadline-warning">
+                <h3>⚠️ Important</h3>
+                <p>Please complete your registration and assessment before the deadline. Late submissions may not be accepted.</p>
+            </div>
+            {{/if}}
+            
+            <!-- Call to Action -->
+            <div style="text-align: center;">
+                <a href="{{registerUrl}}" class="cta-button">
+                    🚀 Register Now
+                </a>
+                <a href="{{appUrl}}" class="secondary-button">
+                    📖 Learn More
+                </a>
+            </div>
+            
+            <!-- Additional Information -->
+            <div style="margin-top: 32px; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
+                <h3 style="color: #374151; font-size: 16px; margin-bottom: 12px;">💡 Tips for Success</h3>
+                <ul style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0; padding-left: 20px;">
+                    <li>Use a valid email address for account verification</li>
+                    <li>Choose a strong password for account security</li>
+                    <li>Ensure you have a stable internet connection</li>
+                    <li>Find a quiet environment to take the assessment</li>
+                    <li>Read all instructions carefully before starting</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>If you have any questions or need assistance, please contact our support team.</p>
+            <p>
+                <a href="{{appUrl}}">Visit {{appName}}</a> | 
+                <a href="{{helpUrl}}">Help Center</a> | 
+                <a href="mailto:{{supportEmail}}">Contact Support</a>
+            </p>
+            <p style="font-size: 12px; color: #9ca3af; margin-top: 16px;">
+                This is an automated message. Please do not reply to this email.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

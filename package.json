@@ -1,0 +1,48 @@
+{
+  "name": "with-docker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev --concurrency=15",
+    "pre-start": "turbo run build",
+    "start": "pm2 start ecosystem.config.js --env production",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "deploy:optimized": "./scripts/deploy-optimized.sh",
+    "load-test:500": "node scripts/load-test-500-users.js",
+    "create-indexes": "node scripts/create-indexes.js",
+    "monitor": "pm2 monit",
+    "monitor:performance": "node scripts/monitor-performance.js",
+    "logs": "pm2 logs",
+    "status": "pm2 status",
+    "redis:setup": "./scripts/redis-setup.sh",
+    "redis:stop": "./scripts/redis-stop.sh",
+    "redis:monitor": "./scripts/redis-monitor.sh",
+    "judge0:setup": "./scripts/judge0-setup.sh",
+    "judge0:stop": "./scripts/judge0-stop.sh",
+    "judge0:monitor": "./scripts/judge0-monitor.sh",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "cpy-cli": "^7.0.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.2.5",
+    "turbo": "^2.5.8"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express-rate-limit": "^8.2.1"
+  }
+}

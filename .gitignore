@@ -1,0 +1,85 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+build/
+
+# dist: ignore all dist folders in all apps/packages
+dist/
+**/dist/
+apps/**/dist/
+packages/**/dist/
+
+# TypeScript build artifacts: ignore .d.ts, .d.ts.map, and .js files in src directories
+**/src/**/*.d.ts
+**/src/**/*.d.ts.map
+**/src/**/*.js
+**/src/**/*.js.map
+apps/**/src/**/*.d.ts
+apps/**/src/**/*.d.ts.map
+apps/**/src/**/*.js
+apps/**/src/**/*.js.map
+packages/**/src/**/*.d.ts
+packages/**/src/**/*.d.ts.map
+packages/**/src/**/*.js
+packages/**/src/**/*.js.map
+
+# misc
+.DS_Store
+*.pem
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# env files: ignore all .env files in all apps/packages
+.env
+.env.*
+.env/*
+**/.env
+**/.env.*
+**/.env/*
+.env.development
+.env.production
+.env.test
+.env.local
+.env.development.local
+.env.production.local
+
+apps/**/.env
+apps/**/.env.*
+apps/**/.env/*
+packages/**/.env
+packages/**/.env.*
+packages/**/.env/*
+
+# logs: ignore all logs folders/files in all apps/packages
+logs/
+logs*
+logs/*
+**/logs/
+**/logs*
+**/logs/*
+
+apps/**/logs/
+apps/**/logs*
+apps/**/logs/*
+packages/**/logs/
+packages/**/logs*
+packages/**/logs/*
+
+# turbo
+.turbo/
+.env

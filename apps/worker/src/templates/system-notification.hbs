@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{appName}}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f4f6fb;
+            color: #1f2933;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+            border: 1px solid #e5e9f2;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background-color: #eef2ff;
+            color: {{priorityColor}};
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 12px;
+            color: #111928;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .content {
+            margin-top: 28px;
+            line-height: 1.7;
+            color: #1f2933;
+        }
+
+        .content p {
+            margin: 0 0 16px;
+        }
+
+        .content strong {
+            color: #111928;
+        }
+
+        .custom-html {
+            margin-top: 24px;
+        }
+
+        .cta {
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .cta a {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        .footer {
+            margin-top: 24px;
+            font-size: 13px;
+            color: #9aa5b1;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="badge">
+                {{#if categoryIcon}}{{categoryIcon}}{{else}}📢{{/if}}&nbsp;{{category}}
+            </div>
+
+            <h1 class="title">{{title}}</h1>
+            <p class="subtitle">{{message}}</p>
+
+            {{#if customHtml}}
+            <div class="custom-html">
+                {{{customHtml}}}
+            </div>
+            {{/if}}
+
+            {{#if hasAction}}
+            <div class="cta">
+                <a href="{{actionUrl}}" target="_blank" rel="noopener noreferrer">
+                    {{#if actionText}}{{actionText}}{{else}}View details{{/if}}
+                </a>
+            </div>
+            {{/if}}
+        </div>
+
+        <div class="footer">
+            <p>Sent by {{appName}} • <a href="{{appUrl}}">{{appDomain}}</a></p>
+            <p>Need help? <a href="{{helpUrl}}">Visit the help center</a> or email <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+        </div>
+    </div>
+</body>
+</html>
+

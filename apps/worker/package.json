@@ -1,0 +1,32 @@
+{
+  "name": "@repo/worker",
+  "version": "1.0.0",
+  "description": "Background job worker application",
+  "main": "dist/exports.js",
+  "types": "dist/exports.d.ts",
+  "scripts": {
+"build": "tsc && cpy \"src/templates/**/*\" dist/templates --parents",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@repo/env-config": "workspace:*",
+    "@repo/logger": "workspace:*",
+    "@repo/redis-lib": "workspace:*",
+    "axios": "^1.13.2",
+    "bullmq": "^5.58.9",
+    "dotenv": "^16.4.5",
+    "handlebars": "^4.7.8",
+    "ioredis": "^5.4.1",
+    "mongoose": "^8.18.2",
+    "nodemailer": "^7.0.7"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/nodemailer": "^7.0.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

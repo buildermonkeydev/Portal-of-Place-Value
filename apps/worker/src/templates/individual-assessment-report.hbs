@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual Assessment Report - {{report.assessment.title}}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 32px 16px 48px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 30px 50px -20px rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 32px 0 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .metric {
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            padding: 16px;
+            background: #f8fafc;
+        }
+
+        .metric span {
+            display: block;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .metric strong {
+            font-size: 20px;
+            color: #0f172a;
+        }
+
+        .responses {
+            margin-top: 20px;
+        }
+
+        .response {
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            padding: 16px 0;
+        }
+
+        .response h4 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .response small {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Individual Assessment Report</h1>
+            <p>Hi {{report.user.firstName}} {{report.user.lastName}}, here is your detailed assessment report.</p>
+
+            <div class="grid">
+                <div class="metric">
+                    <span>Assessment</span>
+                    <strong>{{report.assessment.title}}</strong>
+                </div>
+                <div class="metric">
+                    <span>Score</span>
+                    <strong>{{report.result.totalMarksObtained}} / {{report.result.totalMarksPossible}}</strong>
+                </div>
+                <div class="metric">
+                    <span>Percentage</span>
+                    <strong>{{report.result.percentage}}%</strong>
+                </div>
+                <div class="metric">
+                    <span>Status</span>
+                    <strong>{{report.result.status}}</strong>
+                </div>
+            </div>
+
+            <h2>Responses</h2>
+            <div class="responses">
+                {{#each report.responses}}
+                <div class="response">
+                    <h4>{{#if question}}{{question.text}}{{else}}Question{{/if}}</h4>
+                    {{#if question}}
+                    <small>Section: {{question.section}} &nbsp;•&nbsp; Marks: {{question.marks}}</small>
+                    {{/if}}
+                    <p><strong>Your answer:</strong> {{#if selectedOptions.length}}{{selectedOptions}}{{else}}Not answered{{/if}}</p>
+                    {{#if question.correctAnswer.length}}
+                    <p><strong>Correct answer:</strong> {{question.correctAnswer}}</p>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+
+            <div class="footer">
+                Sent by {{appName}} • Need help? Visit <a href="{{helpUrl}}">{{helpUrl}}</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

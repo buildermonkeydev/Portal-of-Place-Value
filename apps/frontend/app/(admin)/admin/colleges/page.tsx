@@ -12,11 +12,12 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { UserRole } from '@/lib/types';
 
 export default function AdminCollegesPage() {
   const { data: collegesData, isLoading: isLoadingColleges } = useColleges();
   const { data: branchesData, isLoading: isLoadingBranches } = useBranches();
-  const { data: usersData, isLoading: isLoadingUsers } = useUsers({ role: 'student' });
+const { data: usersData, isLoading: isLoadingUsers } = useUsers({ role: UserRole.STUDENT });
 
   const [stats, setStats] = useState({
     totalColleges: 0,

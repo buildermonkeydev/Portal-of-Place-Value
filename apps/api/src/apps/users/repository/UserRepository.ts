@@ -3,7 +3,7 @@ import { BaseRepository, IUserDocument, QueryOptions, UserRole } from '../../../
 import { IBranch } from '../../college/interface/Branch';
 import { logger } from '../../../utils/logger';
 import { College } from '../../college/models/College';
-import { ClientSession } from 'mongoose';
+import { ClientSession , FlattenMaps } from 'mongoose';
 
 
 export class UserRepository implements BaseRepository<IUserDocument> {
@@ -256,36 +256,38 @@ export class UserRepository implements BaseRepository<IUserDocument> {
         }
     }
 
-    async softDeleteUser(id: string, data: Partial<IUserDocument>, session?: ClientSession): Promise<IUserDocument | null> {
-        try {
-            const options: any = { new: true, runValidators: false };
-            if (session) {
-                options.session = session;
-            }
-            // Enforce soft delete fields: merge caller data but override isDeleted and deletedAt
-            const updateData = {
-                ...data,
-                isDeleted: true,
-                deletedAt: data.deletedAt || new Date(),
-                updatedAt: new Date(),
-            };
-            const updatedUser = await User.findByIdAndUpdate(
-                id,
-                updateData,
-                options
-            );
 
-            if (updatedUser) {
-                logger.info(`User soft deleted with ID: ${id}`);
-            }
 
-            return updatedUser;
-        } catch (error) {
-            logger.error('Error soft deleting user', `id: ${id}`, error instanceof Error ? error.message : String(error));
-            throw error;
+async softDeleteUser(id: string, data: Partial<IUserDocument>, session?: ClientSession): Promise<FlattenMaps<IUserDocument> | null> {
+    try {
+        const options: any = { new: true, runValidators: false };
+        if (session) {
+            options.session = session;
         }
-    }
+        
+        const updateData = {
+            ...data,
+            isDeleted: true,
+            deletedAt: data.deletedAt || new Date(),
+            updatedAt: new Date(),
+        };
+        
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            updateData,
+            options
+        ).lean(); // Now return plain object
 
+        if (updatedUser) {
+            logger.info(`User soft deleted with ID: ${id}`);
+        }
+
+        return updatedUser;
+    } catch (error) {
+        logger.error('Error soft deleting user', `id: ${id}`, error instanceof Error ? error.message : String(error));
+        throw error;
+    }
+}
     async count(filter: any = {}): Promise<number> {
         try {
             const finalFilter = this.applySoftDeleteFilter(filter);

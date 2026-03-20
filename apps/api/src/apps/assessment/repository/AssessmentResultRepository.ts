@@ -1,7 +1,7 @@
 import { AssessmentResult } from '../models/AssessmentResult';
 import { IAssessmentResult, IAssessmentResultDocument } from '../../../core/types';
 import { logger } from '../../../utils/logger';
-import { ClientSession } from 'mongoose';
+import { ClientSession , FlattenMaps } from 'mongoose';
 
 export class AssessmentResultRepository {
     async create(resultData: Partial<IAssessmentResultDocument>): Promise<IAssessmentResultDocument> {
@@ -14,50 +14,48 @@ export class AssessmentResultRepository {
         }
     }
 
-    async findById(id: string): Promise<IAssessmentResultDocument | null> {
-        try {
-            return await AssessmentResult.findOne({ _id: id, isDeleted: { $ne: true } })
-                .populate('assessmentId', 'title description duration')
-                .populate('userId', 'firstName lastName email')
-                .populate({
-                    path: 'responses.questionId',
-                    select: 'text type options marks section explanation'
-                }).lean();
-        } catch (error) {
-            logger.error(`Error finding assessment result by ID ${id}:`, error);
-            throw error;
-        }
+async findById(id: string): Promise<FlattenMaps<IAssessmentResultDocument> | null> {
+    try {
+        return await AssessmentResult.findOne({ _id: id, isDeleted: { $ne: true } })
+            .populate('assessmentId', 'title description duration')
+            .populate('userId', 'firstName lastName email')
+            .populate({
+                path: 'responses.questionId',
+                select: 'text type options marks section explanation'
+            }).lean();
+    } catch (error) {
+        logger.error(`Error finding assessment result by ID ${id}:`, error);
+        throw error;
     }
+}
+   async findByIdWithoutIsCorrect(id: string): Promise<any> {
+    try {
+        const result = await AssessmentResult.findOne({ _id: id, isDeleted: { $ne: true } })
+            .populate('assessmentId', 'title description duration')
+            .populate('userId', 'firstName lastName email')
+            .populate({
+                path: 'responses.questionId',
+                select: 'text type options marks section explanation'
+            }).lean();
 
-    async findByIdWithoutIsCorrect(id: string): Promise<IAssessmentResultDocument | null> {
-        try {
-            const result = await AssessmentResult.findOne({ _id: id, isDeleted: { $ne: true } })
-                .populate('assessmentId', 'title description duration')
-                .populate('userId', 'firstName lastName email')
-                .populate({
-                    path: 'responses.questionId',
-                    select: 'text type options marks section explanation'
-                }).lean();
-
-            if (result && result.responses) {
-                result.responses.forEach((response: any) => {
-                    if (response.questionId && response.questionId.options) {
-                        response.questionId.options = response.questionId.options.map((option: any) => ({
-                            text: option.text,
-                            section: option?.section,
-                            _id: option._id,
-
-                        }));
-                    }
-                });
-            }
-
-            return result;
-        } catch (error) {
-            logger.error(`Error finding assessment result by ID ${id}:`, error);
-            throw error;
+        if (result && result.responses) {
+            result.responses.forEach((response: any) => {
+                if (response.questionId && response.questionId.options) {
+                    response.questionId.options = response.questionId.options.map((option: any) => ({
+                        text: option.text,
+                        section: option?.section,
+                        _id: option._id,
+                    }));
+                }
+            });
         }
+
+        return result;
+    } catch (error) {
+        logger.error(`Error finding assessment result by ID ${id}:`, error);
+        throw error;
     }
+}
 
     async findByUserAndAssessment(userId: string, resultId: string): Promise<any | null> {
         try {

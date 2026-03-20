@@ -59,20 +59,19 @@ export class AssessmentService {
         }
         return this.emailService;
     }
+async getUserIdsOfGivenColleges(id: string): Promise<string[]> {
+    try {
+        console.log("id", id);
 
-    async getUserIdsOfGivenColleges(id: string): Promise<string[]> {
-        try {
-            console.log("id", id);
+        const users = await User.find({ "college._id": new mongoose.Types.ObjectId(id) });
+        console.log("users", users);
+        return users?.map(user => user._id.toString()); // Convert ObjectId to string
 
-            const users = await User.find({ "college._id": new mongoose.Types.ObjectId(id) });
-            console.log("users", users);
-            return users?.map(user => user._id as string);
-
-        } catch (error) {
-            logger.error('Error getting user IDs of given colleges', `id: ${id}`, error instanceof Error ? error.message : String(error));
-            return []
-        }
+    } catch (error) {
+        logger.error('Error getting user IDs of given colleges', `id: ${id}`, error instanceof Error ? error.message : String(error));
+        return []
     }
+}
 
     async getUserIdsFromCollegeFilters(collegeData: {
         _id: string;
@@ -1638,7 +1637,7 @@ export class AssessmentService {
 
     private toAssessmentResponseDto(assessment: IAssessmentDocument): AssessmentResponseDto {
         const response: AssessmentResponseDto = {
-            _id: assessment._id as string,
+                 _id: assessment._id.toString(),
             title: assessment.title,
             description: assessment.description ?? "",
             type: assessment.type,
@@ -1705,7 +1704,7 @@ export class AssessmentService {
 
     private toAssessmentWithQuestionsDto(assessment: IAssessmentDocument): AssessmentWithQuestionsDto {
         const response: AssessmentWithQuestionsDto = {
-            _id: assessment._id as string,
+               _id: assessment._id.toString(),
             title: assessment.title,
             description: assessment.description ?? "",
             type: assessment.type,

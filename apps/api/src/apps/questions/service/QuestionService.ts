@@ -184,24 +184,24 @@ export class QuestionService {
         }
     }
 
-    private toQuestionResponseDto(question: IQuestionDocument): QuestionResponseDto {
-        const dto: QuestionResponseDto = {
-            _id: question._id as string,
-            text: question.text,
-            type: question.type,
-            options: question.options,
-            marks: question.marks,
-            explanation: question.explanation || '',
-            createdBy: question.createdBy as string,
-            isActive: question.isActive,
-            createdAt: question.createdAt,
-            updatedAt: question.updatedAt,
-        };
+  private toQuestionResponseDto(question: IQuestionDocument): QuestionResponseDto {
+    const dto: QuestionResponseDto = {
+        _id: question._id.toString(), // Convert ObjectId to string
+        text: question.text,
+        type: question.type,
+        options: question.options,
+        marks: question.marks,
+        explanation: question.explanation || '',
+        createdBy: question.createdBy.toString(), // Convert ObjectId to string
+        isActive: question.isActive,
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt,
+    };
 
-        if (question.section) {
-            dto.section = question.section;
-        }
-
-        return dto;
+    if (question.section) {
+        dto.section = question.section;
     }
+
+    return dto;
+}
 } 

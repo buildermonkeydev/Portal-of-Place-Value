@@ -23,18 +23,34 @@ import {
   Filter,
   Play,
   Clock,
-  HardDrive,
   Code,
   TrendingUp,
   Users,
-  Sun,
-  Cloud,
   Sparkles,
   BookOpen,
   ChevronLeft,
   ChevronRight,
   X,
   Loader2,
+  LayoutGrid,
+  List,
+  Star,
+  Zap,
+  Target,
+  Layers,
+  BarChart,
+  CheckCircle,
+  Award,
+  Globe,
+  Calendar,
+  Folder,
+  Tag,
+  Hash,
+  ArrowUp,
+  ArrowDown,
+  ChevronDown,
+  Settings,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { testAPI } from '@/lib/api/tests';
 import {
@@ -46,6 +62,7 @@ import { PaginatedResponse } from '@/lib/types';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { cn } from '@/lib/utils';
 
 interface TestListProps {
   searchQuery?: string;
@@ -86,10 +103,8 @@ export function TestList({ searchQuery }: TestListProps) {
       let response: PaginatedResponse<TestListItem>;
 
       if (isAdmin) {
-        // Admins can see all published tests
         response = await testAPI.getPublishedTests(filters);
       } else {
-        // Regular users only see tests assigned to them
         response = await testAPI.getAssignedTests(filters);
       }
 
@@ -112,7 +127,7 @@ export function TestList({ searchQuery }: TestListProps) {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
-      page: 1, // Reset to first page when filters change
+      page: 1,
     }));
   };
 
@@ -123,387 +138,388 @@ export function TestList({ searchQuery }: TestListProps) {
   const getDifficultyColor = (difficulty: TestDifficulty) => {
     switch (difficulty) {
       case TestDifficulty.EASY:
-        return 'bg-gradient-to-r from-green-100 to-green-50 text-green-700 border-green-200';
+        return 'bg-green-500/10 text-green-400 border-green-500/20';
       case TestDifficulty.MEDIUM:
-        return 'bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-700 border-yellow-200';
+        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
       case TestDifficulty.HARD:
-        return 'bg-gradient-to-r from-red-100 to-red-50 text-red-700 border-red-200';
+        return 'bg-red-500/10 text-red-400 border-red-500/20';
       default:
-        return 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 border-gray-200';
+        return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
     }
   };
 
   const getDifficultyIcon = (difficulty: TestDifficulty) => {
     switch (difficulty) {
       case TestDifficulty.EASY:
-        return '🟢';
+        return <Zap className="h-3 w-3 text-green-400" />;
       case TestDifficulty.MEDIUM:
-        return '🟡';
+        return <Target className="h-3 w-3 text-yellow-400" />;
       case TestDifficulty.HARD:
-        return '🔴';
+        return <Award className="h-3 w-3 text-red-400" />;
       default:
-        return '⚪';
+        return <Hash className="h-3 w-3 text-zinc-400" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-orange-50">
-      {/* Decorative Elements */}
-      <div className="fixed top-20 right-10 opacity-10 pointer-events-none">
-        <Sun className="h-40 w-40 text-orange-300" />
-      </div>
-      <div className="fixed bottom-20 left-10 opacity-10 pointer-events-none">
-        <Cloud className="h-40 w-40 text-sky-300" />
+    <div className="min-h-screen bg-[#0C0C10] relative overflow-x-hidden">
+      {/* Background effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.15),transparent_50%)]"></div>
+        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom,rgba(249,115,22,0.1),transparent_50%)]"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-        {/* Header */}
-        <div className="text-center space-y-3 mb-8">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="h-6 w-1 bg-gradient-to-b from-sky-400 to-orange-400 rounded-full"></div>
-            <div className="flex items-center gap-2">
-              <Code className="h-6 w-6 text-sky-500" />
-              <span className="text-sm font-semibold uppercase tracking-wider bg-gradient-to-r from-sky-600 to-orange-600 bg-clip-text text-transparent">
-                Practice Makes Perfect
-              </span>
-            </div>
-            <div className="h-6 w-1 bg-gradient-to-b from-orange-400 to-sky-400 rounded-full"></div>
-          </div>
+      <div className="relative z-10 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
           
-          <h1 className="text-4xl font-bold">
-            <span className="bg-gradient-to-r from-sky-700 via-sky-600 to-orange-600 bg-clip-text text-transparent">
+          {/* Header */}
+          <div className="text-left space-y-3 mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-8 w-1 bg-gradient-to-b from-indigo-500 to-orange-500 rounded-full"></div>
+              <div className="flex items-center gap-2">
+                <Code className="h-5 w-5 text-indigo-400" />
+                <span className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
+                  Practice Hub · Coding Challenges
+                </span>
+              </div>
+            </div>
+            
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-white">
               Coding Tests
-            </span>
-          </h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            Practice coding with our collection of programming challenges
-          </p>
-        </div>
-
-        {/* Filters Card */}
-        <Card className="border-sky-100 shadow-sm overflow-hidden mb-6">
-          <CardHeader className="bg-gradient-to-r from-sky-50/50 to-orange-50/50 border-b border-sky-100 py-4">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-sky-500" />
-              <CardTitle className="text-sm font-semibold text-gray-700">Filters</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="p-5">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Search */}
-              <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">Search</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-sky-400" />
-                  <Input
-                    placeholder="Search tests..."
-                    value={filters.search || ''}
-                    onChange={(e) => handleFilterChange('search', e.target.value)}
-                    className="pl-10 pr-8 py-2.5 border-sky-200 focus:border-sky-400 rounded-xl bg-white/80 text-sm"
-                  />
-                  {filters.search && (
-                    <button
-                      onClick={() => handleFilterChange('search', '')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Difficulty Filter */}
-              <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">Difficulty</label>
-                <Select
-                  value={filters.difficulty || 'all'}
-                  onValueChange={(value) =>
-                    handleFilterChange(
-                      'difficulty',
-                      value === 'all' ? undefined : value
-                    )
-                  }
-                >
-                  <SelectTrigger className="border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
-                    <SelectValue placeholder="All difficulties" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All difficulties</SelectItem>
-                    <SelectItem value={TestDifficulty.EASY}>
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-green-500"></span>
-                        Easy
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={TestDifficulty.MEDIUM}>
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-yellow-500"></span>
-                        Medium
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={TestDifficulty.HARD}>
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-red-500"></span>
-                        Hard
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Sort By */}
-              <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">Sort By</label>
-                <Select
-                  value={filters.sortBy || 'createdAt'}
-                  onValueChange={(value) => handleFilterChange('sortBy', value)}
-                >
-                  <SelectTrigger className="border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="title">Title</SelectItem>
-                    <SelectItem value="difficulty">Difficulty</SelectItem>
-                    <SelectItem value="createdAt">Created Date</SelectItem>
-                    <SelectItem value="updatedAt">Updated Date</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Order */}
-              <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">Order</label>
-                <Select
-                  value={filters.sortOrder || 'desc'}
-                  onValueChange={(value) =>
-                    handleFilterChange('sortOrder', value)
-                  }
-                >
-                  <SelectTrigger className="border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="asc">Ascending</SelectItem>
-                    <SelectItem value="desc">Descending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results Count */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-  
-            <p className="text-sm text-gray-500">
-              Showing <span className="font-medium text-gray-700">{tests.length}</span> of{' '}
-              <span className="font-medium text-gray-700">{pagination.total}</span> tests
+            </h1>
+            <p className="text-zinc-400 text-base max-w-2xl">
+              Sharpen your skills with our collection of programming challenges
             </p>
           </div>
-          <Badge variant="outline" className="border-sky-200 bg-white/80 text-sky-700">
-            Page {pagination.page} of {pagination.totalPages || 1}
-          </Badge>
-        </div>
 
-        {/* Tests Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="border-sky-100 shadow-sm overflow-hidden">
-                <div className="h-1 w-full bg-gradient-to-r from-sky-200 to-orange-200"></div>
-                <CardHeader>
-                  <div className="h-5 bg-gradient-to-r from-sky-100 to-sky-50 rounded w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-gradient-to-r from-sky-50 to-orange-50 rounded w-1/2 animate-pulse mt-2"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gradient-to-r from-sky-50 to-orange-50 rounded animate-pulse"></div>
-                    <div className="h-3 bg-gradient-to-r from-sky-50 to-orange-50 rounded w-5/6 animate-pulse"></div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : tests.length === 0 ? (
-          <Card className="border-sky-100 shadow-sm overflow-hidden">
-            <CardContent className="text-center py-12">
-              <div className="h-16 w-16 bg-gradient-to-br from-sky-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Code className="h-8 w-8 text-sky-400" />
+          {/* Filters Card */}
+          <Card className="bg-white/5 border-white/10 overflow-hidden mb-6">
+            <CardHeader className="bg-white/5 border-b border-white/10 py-4">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-indigo-400" />
+                <CardTitle className="text-sm font-semibold text-zinc-300">Filter Options</CardTitle>
               </div>
-              <p className="text-gray-500 font-medium mb-2">No tests found</p>
-              <p className="text-sm text-gray-400">
-                Try adjusting your search criteria
-              </p>
-              {(filters.search || filters.difficulty) && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    handleFilterChange('search', '');
-                    handleFilterChange('difficulty', undefined);
-                  }}
-                  className="mt-4 border-sky-200 hover:bg-sky-50 text-sky-700 rounded-xl"
-                >
-                  Clear Filters
-                </Button>
-              )}
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Search */}
+                <div>
+                  <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2 block">Search</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400" />
+                    <Input
+                      placeholder="Search tests..."
+                      value={filters.search || ''}
+                      onChange={(e) => handleFilterChange('search', e.target.value)}
+                      className="pl-10 pr-8 py-2.5 bg-white/5 border-white/10 focus:border-indigo-500 rounded-xl text-white placeholder:text-zinc-600 text-sm"
+                    />
+                    {filters.search && (
+                      <button
+                        onClick={() => handleFilterChange('search', '')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Difficulty Filter */}
+                <div>
+                  <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2 block">Difficulty</label>
+                  <Select
+                    value={filters.difficulty || 'all'}
+                    onValueChange={(value) =>
+                      handleFilterChange(
+                        'difficulty',
+                        value === 'all' ? undefined : value
+                      )
+                    }
+                  >
+                    <SelectTrigger className="bg-white/5 border-white/10 focus:border-indigo-500 rounded-xl py-2.5 h-auto text-white">
+                      <SelectValue placeholder="All difficulties" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
+                      <SelectItem value="all">All difficulties</SelectItem>
+                      <SelectItem value={TestDifficulty.EASY}>
+                        <div className="flex items-center gap-2">
+                          <Zap className="h-3 w-3 text-green-400" />
+                          <span>Easy</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value={TestDifficulty.MEDIUM}>
+                        <div className="flex items-center gap-2">
+                          <Target className="h-3 w-3 text-yellow-400" />
+                          <span>Medium</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value={TestDifficulty.HARD}>
+                        <div className="flex items-center gap-2">
+                          <Award className="h-3 w-3 text-red-400" />
+                          <span>Hard</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Sort By */}
+                <div>
+                  <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2 block">Sort By</label>
+                  <Select
+                    value={filters.sortBy || 'createdAt'}
+                    onValueChange={(value) => handleFilterChange('sortBy', value)}
+                  >
+                    <SelectTrigger className="bg-white/5 border-white/10 focus:border-indigo-500 rounded-xl py-2.5 h-auto text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
+                      <SelectItem value="title">Title</SelectItem>
+                      <SelectItem value="difficulty">Difficulty</SelectItem>
+                      <SelectItem value="createdAt">Created Date</SelectItem>
+                      <SelectItem value="updatedAt">Updated Date</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Order */}
+                <div>
+                  <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2 block">Order</label>
+                  <Select
+                    value={filters.sortOrder || 'desc'}
+                    onValueChange={(value) =>
+                      handleFilterChange('sortOrder', value)
+                    }
+                  >
+                    <SelectTrigger className="bg-white/5 border-white/10 focus:border-indigo-500 rounded-xl py-2.5 h-auto text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
+                      <SelectItem value="asc">Ascending</SelectItem>
+                      <SelectItem value="desc">Descending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tests.map((test) => (
-              <Card 
-                key={test._id} 
-                className="border-sky-100 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] overflow-hidden group"
-              >
-                {/* Colored top bar based on difficulty */}
-                <div className={`h-1 w-full ${
-                  test.difficulty === TestDifficulty.EASY ? 'bg-gradient-to-r from-green-400 to-emerald-400' :
-                  test.difficulty === TestDifficulty.MEDIUM ? 'bg-gradient-to-r from-yellow-400 to-amber-400' :
-                  'bg-gradient-to-r from-red-400 to-orange-400'
-                }`}></div>
-                
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 group-hover:text-sky-700 transition-colors line-clamp-2">
-                        {test.title}
-                      </CardTitle>
-                      <CardDescription className="mt-1 text-sm text-gray-500 line-clamp-2">
-                        {test.description}
-                      </CardDescription>
-                    </div>
-                    <Badge 
-                      variant="outline"
-                      className={`ml-2 ${getDifficultyColor(test.difficulty)}`}
-                    >
-                      <span className="mr-1">{getDifficultyIcon(test.difficulty)}</span>
-                      {test.difficulty}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  {/* Languages */}
-                  <div className="flex items-center gap-2 p-2 bg-gradient-to-r from-sky-50/30 to-orange-50/30 rounded-lg">
-                    <Code className="w-4 h-4 text-sky-500" />
-                    <span className="text-sm text-gray-600">
-                      {test.allowedLanguages.length} language{test.allowedLanguages.length !== 1 ? 's' : ''}
-                    </span>
-                  </div>
 
-                  {/* Tags */}
-                  {test.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {test.tags.slice(0, 3).map((tag, index) => (
-                        <Badge 
-                          key={index} 
-                          variant="outline" 
-                          className="bg-gradient-to-r from-sky-50 to-orange-50 text-sky-700 border-sky-200 text-xs"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                      {test.tags.length > 3 && (
-                        <Badge 
-                          variant="outline" 
-                          className="bg-gray-50 text-gray-600 border-gray-200 text-xs"
-                        >
-                          +{test.tags.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-2 border-t border-sky-100">
-                    <span className="text-xs text-gray-400 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {new Date(test.createdAt).toLocaleDateString()}
-                    </span>
-                    <Link href={`/dashboard/tests/${test._id}`}>
-                      <Button 
-                        size="sm"
-                        className="bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white rounded-lg text-xs px-3 py-1.5"
-                      >
-                        <Play className="w-3 h-3 mr-1" />
-                        Start Test
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {pagination.totalPages > 1 && (
-          <div className="flex justify-center mt-8">
-            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-xl border border-sky-100 p-1">
-              <Button
-                variant="outline"
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page === 1}
-                className="border-sky-200 hover:bg-sky-50 text-sky-700 rounded-lg"
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Previous
-              </Button>
-              
-              <div className="flex items-center gap-1 px-2">
-                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                  let pageNum: number;
-                  if (pagination.totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (pagination.page <= 3) {
-                    pageNum = i + 1;
-                  } else if (pagination.page >= pagination.totalPages - 2) {
-                    pageNum = pagination.totalPages - 4 + i;
-                  } else {
-                    pageNum = pagination.page - 2 + i;
-                  }
-                  return (
-                    <Button
-                      key={pageNum}
-                      variant={pagination.page === pageNum ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`min-w-[36px] rounded-lg ${
-                        pagination.page === pageNum
-                          ? 'bg-gradient-to-r from-sky-500 to-blue-500 text-white'
-                          : 'border-sky-200 hover:bg-sky-50 text-sky-700'
-                      }`}
-                    >
-                      {pageNum}
-                    </Button>
-                  );
-                })}
-              </div>
-
-              <Button
-                variant="outline"
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
-                className="border-sky-200 hover:bg-sky-50 text-sky-700 rounded-lg"
-              >
-                Next
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
+          {/* Results Count */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-2">
+              <Layers className="h-4 w-4 text-indigo-400" />
+              <p className="text-sm text-zinc-400">
+                Showing <span className="font-medium text-white">{tests.length}</span> of{' '}
+                <span className="font-medium text-white">{pagination.total}</span> challenges
+              </p>
             </div>
+            <Badge variant="outline" className="border-white/10 bg-white/5 text-zinc-300">
+              Page {pagination.page} of {pagination.totalPages || 1}
+            </Badge>
           </div>
-        )}
 
-        {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-sky-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="h-1 w-1 rounded-full bg-sky-300"></span>
-            <span className="text-xs text-gray-400">Coding Tests</span>
-            <span className="h-1 w-1 rounded-full bg-orange-300"></span>
+          {/* Tests Grid */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Card key={index} className="bg-white/5 border-white/10 overflow-hidden">
+                  <div className="h-1 w-full bg-gradient-to-r from-indigo-500/20 to-orange-500/20"></div>
+                  <CardHeader>
+                    <div className="h-5 bg-white/10 rounded w-3/4 animate-pulse"></div>
+                    <div className="h-4 bg-white/5 rounded w-1/2 animate-pulse mt-2"></div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-white/5 rounded animate-pulse"></div>
+                      <div className="h-3 bg-white/5 rounded w-5/6 animate-pulse"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : tests.length === 0 ? (
+            <Card className="bg-white/5 border-white/10 overflow-hidden">
+              <CardContent className="text-center py-12">
+                <div className="h-16 w-16 bg-gradient-to-br from-indigo-500/10 to-orange-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
+                  <Code className="h-8 w-8 text-indigo-400" />
+                </div>
+                <p className="text-zinc-300 font-medium mb-2">No challenges found</p>
+                <p className="text-sm text-zinc-500">
+                  Try adjusting your search criteria
+                </p>
+                {(filters.search || filters.difficulty) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      handleFilterChange('search', '');
+                      handleFilterChange('difficulty', undefined);
+                    }}
+                    className="mt-4 border-white/10 hover:bg-white/5 text-zinc-300 rounded-xl"
+                  >
+                    Clear Filters
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tests.map((test) => (
+                <Card 
+                  key={test._id} 
+                  className="bg-white/5 border-white/10 hover:border-indigo-500/30 transition-all hover:scale-[1.02] overflow-hidden group"
+                >
+                  {/* Colored top bar based on difficulty */}
+                  <div className={cn(
+                    "h-1 w-full bg-gradient-to-r",
+                    test.difficulty === TestDifficulty.EASY ? "from-green-500 to-emerald-500" :
+                    test.difficulty === TestDifficulty.MEDIUM ? "from-yellow-500 to-amber-500" :
+                    "from-red-500 to-orange-500"
+                  )}></div>
+                  
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg font-semibold text-white group-hover:text-indigo-400 transition-colors line-clamp-2">
+                          {test.title}
+                        </CardTitle>
+                        <CardDescription className="mt-1 text-sm text-zinc-400 line-clamp-2">
+                          {test.description}
+                        </CardDescription>
+                      </div>
+                      <Badge 
+                        variant="outline"
+                        className={cn("ml-2 border", getDifficultyColor(test.difficulty))}
+                      >
+                        <span className="mr-1">{getDifficultyIcon(test.difficulty)}</span>
+                        {test.difficulty}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="space-y-4">
+                    {/* Languages */}
+                    <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10">
+                      <Code className="w-4 h-4 text-indigo-400" />
+                      <span className="text-sm text-zinc-300">
+                        {test.allowedLanguages.length} language{test.allowedLanguages.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {/* Tags */}
+                    {test.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {test.tags.slice(0, 3).map((tag, index) => (
+                          <Badge 
+                            key={index} 
+                            variant="outline" 
+                            className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20 text-xs"
+                          >
+                            <Tag className="h-3 w-3 mr-1" />
+                            {tag}
+                          </Badge>
+                        ))}
+                        {test.tags.length > 3 && (
+                          <Badge 
+                            variant="outline" 
+                            className="bg-white/5 text-zinc-400 border-white/10 text-xs"
+                          >
+                            +{test.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                      <span className="text-xs text-zinc-500 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(test.createdAt).toLocaleDateString()}
+                      </span>
+                      <Link href={`/dashboard/tests/${test._id}`}>
+                        <Button 
+                          size="sm"
+                          className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-lg text-xs px-3 py-1.5 shadow-lg shadow-indigo-500/25"
+                        >
+                          <Play className="w-3 h-3 mr-1" />
+                          Start
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="flex justify-center mt-8">
+              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-1">
+                <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className="border-white/10 hover:bg-white/5 text-zinc-300 rounded-lg"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-1 px-2">
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum: number;
+                    if (pagination.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (pagination.page <= 3) {
+                      pageNum = i + 1;
+                    } else if (pagination.page >= pagination.totalPages - 2) {
+                      pageNum = pagination.totalPages - 4 + i;
+                    } else {
+                      pageNum = pagination.page - 2 + i;
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={pagination.page === pageNum ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        className={cn(
+                          "min-w-[36px] rounded-lg",
+                          pagination.page === pageNum
+                            ? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white'
+                            : 'border-white/10 hover:bg-white/5 text-zinc-300'
+                        )}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.totalPages}
+                  className="border-white/10 hover:bg-white/5 text-zinc-300 rounded-lg"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-indigo-400"></span>
+              <span className="text-xs text-zinc-500">Practice Hub</span>
+              <span className="h-1 w-1 rounded-full bg-orange-400"></span>
+            </div>
+            <span className="text-xs text-zinc-500">
+              {tests.length} challenge{tests.length !== 1 ? 's' : ''} available
+            </span>
           </div>
-          <span className="text-xs text-gray-400">
-            {tests.length} test{tests.length !== 1 ? 's' : ''} available
-          </span>
         </div>
       </div>
     </div>

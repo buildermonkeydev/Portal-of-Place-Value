@@ -19,6 +19,9 @@ import {
   CheckCircle,
   Loader2,
   XCircle,
+  Clock,
+  Save,
+  Shield,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { debounce } from 'lodash';
@@ -34,6 +37,7 @@ import {
 import { Answer, AssessmentResult } from '@/lib/types';
 import Image from 'next/image';
 import { Loading } from '@/components/ui/Loading';
+import { cn } from '@/lib/utils';
 
 export default function TakeAssessmentPage({
   params,
@@ -77,10 +81,6 @@ export default function TakeAssessmentPage({
   const calculateTimeLeft = useCallback(
     (assessment: AssessmentResult): number => {
       if (!assessment?.assessmentId?.duration || !assessment?.startTime) {
-        console.warn('Missing assessment duration or start time:', {
-          duration: assessment?.assessmentId?.duration,
-          startTime: assessment?.startTime,
-        });
         return 0;
       }
 
@@ -117,7 +117,6 @@ export default function TakeAssessmentPage({
   const debouncedSave = useCallback(
     (questionId: string, selectedOptions: string[]) => {
       if (isStarted && !isCompleted && assessmentId) {
-        // Get the current question to extract section information
         const currentQuestion = assessment?.responses?.find(
           (r) => r.questionId._id === questionId
         )?.questionId;
@@ -287,7 +286,7 @@ export default function TakeAssessmentPage({
         return {
           selectedOptions: r.selectedOptions,
           questionId: r.questionId._id + '',
-          section: r.section || r.questionId.section || '', // Include section information
+          section: r.section || r.questionId.section || '',
         };
       });
 
@@ -375,7 +374,6 @@ export default function TakeAssessmentPage({
 
   const handleAnswerChange = useCallback(
     (questionId: string, selectedOptions: string[]) => {
-      // Get the current question to extract section information
       const currentQuestion = assessment?.responses?.find(
         (r) => r.questionId._id === questionId
       )?.questionId;
@@ -389,7 +387,7 @@ export default function TakeAssessmentPage({
             return {
               ...prev,
               selectedOptions,
-              section: section, // Update the section in the response
+              section: section,
             };
           }
           return prev;
@@ -408,7 +406,7 @@ export default function TakeAssessmentPage({
         assessmentId: assessment?.assessmentId?._id || '',
         questionId,
         selectedOptions,
-        section, // Include section in the save request
+        section,
       });
 
       debouncedSaveWithDelay(questionId, selectedOptions);
@@ -465,7 +463,6 @@ export default function TakeAssessmentPage({
       const hasMCQQuestions = assessment.responses && assessment.responses.length > 0;
       const hasCodingQuestions = assessment.codingQuestions && assessment.codingQuestions.length > 0;
       
-      // If no MCQ questions exist but coding questions do, switch to coding mode
       if (!hasMCQQuestions && hasCodingQuestions && currentQuestionType === 'mcq') {
         setCurrentQuestionType('coding');
         setCurrentCodingQuestionIndex(0);
@@ -473,11 +470,8 @@ export default function TakeAssessmentPage({
     }
   }, [assessment, currentQuestionType]);
 
-  // Removed beforeunload warning - users can navigate freely
-
   const handleNextQuestion = () => {
     if (currentQuestionType === 'mcq') {
-      // If we're on the last MCQ question and there are coding questions, switch to coding
       if (currentQuestionIndex >= (assessment?.responses?.length || 0) - 1) {
         if (
           assessment?.codingQuestions &&
@@ -490,7 +484,6 @@ export default function TakeAssessmentPage({
         setCurrentQuestionIndex((prev) => prev + 1);
       }
     } else if (currentQuestionType === 'coding') {
-      // If we're on the last coding question, stay there (or could switch back to MCQ)
       if (
         currentCodingQuestionIndex <
         (assessment?.codingQuestions?.length || 0) - 1
@@ -506,7 +499,6 @@ export default function TakeAssessmentPage({
         setCurrentQuestionIndex((prev) => prev - 1);
       }
     } else if (currentQuestionType === 'coding') {
-      // If we're on the first coding question, switch back to last MCQ question
       if (currentCodingQuestionIndex <= 0) {
         setCurrentQuestionType('mcq');
         setCurrentQuestionIndex((assessment?.responses?.length || 0) - 1);
@@ -519,7 +511,6 @@ export default function TakeAssessmentPage({
   const handlePauseAssessment = async () => {
     if (isStarted && !isCompleted && assessmentId) {
       try {
-        // Force save all responses before pausing
         if (responses?.responses && responses.responses.length > 0) {
           await saveAllResponses();
         }
@@ -541,9 +532,6 @@ export default function TakeAssessmentPage({
     setCurrentQuestionType(type);
     if (type === 'coding' && index !== undefined) {
       setCurrentCodingQuestionIndex(index);
-    } else if (type === 'mcq') {
-      // Don't reset to first question - let the user choose which MCQ question to go to
-      // The index parameter will be handled by the MCQ question selection
     }
   };
 
@@ -557,27 +545,32 @@ export default function TakeAssessmentPage({
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-20">
-            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-600">
-              Error Loading Assessment
-            </h1>
-            <p className="text-gray-600 mb-4">{apiError}</p>
-            <div className="space-x-4">
-              <Button
-                onClick={() => window.location.reload()}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Loader2 className="h-4 w-4 mr-2" />
-                Retry
-              </Button>
-              <Button
-                onClick={() => router.push('/dashboard/assessments')}
-                variant="outline"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Assessments
-              </Button>
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <XCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Error Loading Assessment
+              </h1>
+              <p className="text-zinc-400 mb-4">{apiError}</p>
+              <div className="space-x-4">
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white"
+                >
+                  <Loader2 className="h-4 w-4 mr-2" />
+                  Retry
+                </Button>
+                <Button
+                  onClick={() => router.push('/dashboard/assessments')}
+                  variant="outline"
+                  className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Assessments
+                </Button>
+              </div>
             </div>
           </div>
         </DashboardLayout>
@@ -589,10 +582,14 @@ export default function TakeAssessmentPage({
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <Loading
-            message="Loading assessment... Behave Like Compiler"
-            size="md"
-          />
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="relative inline-flex mb-4">
+                <div className="h-16 w-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-400 animate-spin"></div>
+              </div>
+              <p className="text-zinc-400">Loading assessment...</p>
+            </div>
+          </div>
         </DashboardLayout>
       </ProtectedRoute>
     );
@@ -602,22 +599,25 @@ export default function TakeAssessmentPage({
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-10">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-600">
-              Assessment Not Found
-            </h1>
-            <p className="text-gray-600">
-              The assessment you're looking for doesn't exist or you don't have
-              access to it.
-            </p>
-            <Button
-              onClick={() => router.push('/dashboard/assessments')}
-              className="mt-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Assessments
-            </Button>
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Assessment Not Found
+              </h1>
+              <p className="text-zinc-400 mb-4">
+                The assessment you're looking for doesn't exist or you don't have access to it.
+              </p>
+              <Button
+                onClick={() => router.push('/dashboard/assessments')}
+                className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Assessments
+              </Button>
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
@@ -629,15 +629,19 @@ export default function TakeAssessmentPage({
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-20">
-            <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-green-600">
-              Assessment Completed!
-            </h1>
-            <p className="text-gray-600 mb-4">
-              Thank you for completing the assessment.
-            </p>
-            <Loader2 className="h-6 w-6 animate-spin text-blue-600 mx-auto" />
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-emerald-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Assessment Completed!
+              </h1>
+              <p className="text-zinc-400 mb-4">
+                Thank you for completing the assessment.
+              </p>
+              <Loader2 className="h-6 w-6 animate-spin text-indigo-400 mx-auto" />
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
@@ -648,13 +652,17 @@ export default function TakeAssessmentPage({
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-20">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-600">
-              Session Expired!
-            </h1>
-            <p className="text-gray-600 mb-4">Your session has expired.</p>
-            <Loader2 className="h-6 w-6 animate-spin text-blue-600 mx-auto" />
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Session Expired!
+              </h1>
+              <p className="text-zinc-400 mb-4">Your session has expired.</p>
+              <Loader2 className="h-6 w-6 animate-spin text-indigo-400 mx-auto" />
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
@@ -668,56 +676,57 @@ export default function TakeAssessmentPage({
   const currentResponse =
     currentQuestionType === 'mcq' ? getCurrentQuestionResponse() : null;
 
-  // Check if there are any MCQ questions
   const hasMCQQuestions = assessment.responses && assessment.responses.length > 0;
-  // Check if there are any coding questions
   const hasCodingQuestions = assessment.codingQuestions && assessment.codingQuestions.length > 0;
 
-  // Note: Auto-switch to coding mode is handled by useEffect above
-
-  // Only show error if there are truly NO questions at all (neither MCQ nor coding)
   if (!hasMCQQuestions && !hasCodingQuestions) {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-20">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-600">
-              No Questions Found
-            </h1>
-            <p className="text-gray-600">
-              This assessment doesn't have any questions. Please contact the administrator.
-            </p>
-            <Button
-              onClick={() => router.push('/dashboard/assessments')}
-              className="mt-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Assessments
-            </Button>
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                No Questions Found
+              </h1>
+              <p className="text-zinc-400 mb-4">
+                This assessment doesn't have any questions. Please contact the administrator.
+              </p>
+              <Button
+                onClick={() => router.push('/dashboard/assessments')}
+                className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Assessments
+              </Button>
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
     );
   }
 
-  // For MCQ mode with MCQ questions - check if current question exists
   if (currentQuestionType === 'mcq' && hasMCQQuestions && !currentQuestion) {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-20">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-600">
-              Question Not Found
-            </h1>
-            <p className="text-gray-600">
-              The current question could not be loaded. Please try refreshing
-              the page.
-            </p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Refresh Page
-            </Button>
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Question Not Found
+              </h1>
+              <p className="text-zinc-400 mb-4">
+                The current question could not be loaded. Please try refreshing the page.
+              </p>
+              <Button onClick={() => window.location.reload()} className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white">
+                Refresh Page
+              </Button>
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
@@ -730,18 +739,21 @@ export default function TakeAssessmentPage({
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="text-center py-20">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-600">
-              Question Data Not Found
-            </h1>
-            <p className="text-gray-600">
-              The question data could not be loaded. Please try refreshing the
-              page.
-            </p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Refresh Page
-            </Button>
+          <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Question Data Not Found
+              </h1>
+              <p className="text-zinc-400 mb-4">
+                The question data could not be loaded. Please try refreshing the page.
+              </p>
+              <Button onClick={() => window.location.reload()} className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white">
+                Refresh Page
+              </Button>
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
@@ -755,7 +767,6 @@ export default function TakeAssessmentPage({
 
   const formatTimeRemaining = (seconds: number): string => {
     if (seconds <= 0) return '0:00';
-
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
@@ -763,19 +774,29 @@ export default function TakeAssessmentPage({
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen w-full overflow-x-hidden bg-gray-50">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div className="min-h-screen bg-[#0C0C10] relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.15),transparent_50%)]"></div>
+          <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom,rgba(249,115,22,0.1),transparent_50%)]"></div>
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="w-full max-w-full space-y-4 sm:space-y-6 overflow-hidden">
             {/* Header */}
-            <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 overflow-hidden bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 overflow-hidden bg-white/5 rounded-xl border border-white/10 p-4 sm:p-6 backdrop-blur-sm">
               <div className="flex-shrink-0">
-              <Image
-                src={'/logo.png'}
+                <Image
+                  src={'/logo.png'}
                   width={120}
                   height={60}
-                alt="compiler"
+                  alt="compiler"
                   className="h-12 sm:h-14 w-auto object-contain"
-              />
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <AssessmentHeader
@@ -804,19 +825,16 @@ export default function TakeAssessmentPage({
             {/* Countdown Warning Banner */}
             {timeLeft <= 300 && timeLeft > 0 && (
               <div
-                className={`w-full p-4 rounded-lg border-2 overflow-hidden ${
+                className={cn(
+                  "w-full p-4 rounded-xl border-2 overflow-hidden backdrop-blur-sm",
                   timeLeft <= 60
-                    ? 'bg-red-50 border-red-300 text-red-800'
-                    : 'bg-yellow-50 border-yellow-300 text-yellow-800'
-                }`}
+                    ? "bg-red-500/10 border-red-500/30 text-red-400"
+                    : "bg-amber-500/10 border-amber-500/30 text-amber-400"
+                )}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex items-center space-x-2 min-w-0">
-                    <AlertCircle
-                      className={`h-5 w-5 flex-shrink-0 ${
-                        timeLeft <= 60 ? 'text-red-600' : 'text-yellow-600'
-                      }`}
-                    />
+                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
                     <span className="font-medium break-words">
                       {timeLeft <= 60
                         ? '🚨 Time is almost up! Submit your assessment now!'
@@ -828,7 +846,7 @@ export default function TakeAssessmentPage({
                       {formatTimeRemaining(timeLeft)} remaining
                     </div>
                     {timeLeft <= 60 && (
-                      <div className="text-xs text-red-600 whitespace-nowrap">
+                      <div className="text-xs text-red-400 whitespace-nowrap">
                         Auto-submit in {timeLeft} seconds
                       </div>
                     )}
@@ -856,7 +874,7 @@ export default function TakeAssessmentPage({
               {/* Left Sidebar - Question Navigator */}
               <div className="w-full xl:w-80 xl:flex-shrink-0 order-2 xl:order-1 overflow-hidden">
                 <div className="hidden xl:block">
-                <QuestionSidebar
+                  <QuestionSidebar
                     questions={assessment.responses || []}
                     currentQuestionIndex={currentQuestionIndex}
                     responses={responses?.responses || []}

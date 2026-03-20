@@ -1,0 +1,9 @@
+﻿{
+  "email": "test@example.com",
+  "password": "password123",
+  "firstName": "Test",
+  "lastName": "User",
+  "mobileNumber": "1234567890",
+  "collegeYear": "3",
+  "registrationNo": "REG123456"
+}

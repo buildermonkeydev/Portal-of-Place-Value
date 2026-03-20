@@ -21,6 +21,15 @@ import {
   CheckCircle,
   Play,
   Eye,
+  Sparkles,
+  BookOpen,
+  Award,
+  Zap,
+  Shield,
+  ArrowLeft,
+  Info,
+  TrendingUp,
+  Timer,
 } from 'lucide-react';
 import { assessmentAPI } from '@/lib/api/assessments';
 import {
@@ -34,6 +43,7 @@ import { useStartAssessment } from '@/lib/hooks/useAssessmentResults';
 import { useAuth } from '@/lib/hooks';
 import { toast } from 'sonner';
 import { Loading } from '@/components/ui/Loading';
+import { cn } from '@/lib/utils';
 
 const AssessmentDetailsPage = () => {
   const params = useParams();
@@ -53,8 +63,6 @@ const AssessmentDetailsPage = () => {
     const fetchAssessmentData = async () => {
       try {
         setLoading(true);
-
-        // Get assessment details
         const assessmentData =
           await assessmentAPI.getAssessmentById(assessmentId);
         setAssessment(assessmentData);
@@ -71,10 +79,6 @@ const AssessmentDetailsPage = () => {
     }
   }, [assessmentId]);
 
-  const redirectToTakeAssessment = (assessmentId) => {
-    router.push(`/dashboard/assessments/take/${assessmentId}`);
-  };
-
   const isExpired = () => {
     if (!assessment) return false;
     if (assessment.endDate) {
@@ -85,26 +89,17 @@ const AssessmentDetailsPage = () => {
 
   const canTakeAssessment = () => {
     if (!assessment) return false;
-
-    // Check if expired
     if (isExpired()) return false;
-
-    // Check if assessment is active
     if (assessment.status !== 'active' || !assessment.isActive) return false;
-
-    // Check if user is assigned (userAssessment exists)
     if (!assessment) return false;
-
-    // Check if not already taken
     if (assessment.isTaken) return false;
-
     return true;
   };
 
   const getStatusBadge = () => {
     if (isExpired()) {
       return (
-        <Badge variant="destructive" className="flex items-center gap-1">
+        <Badge className="bg-red-500/10 text-red-400 border-red-500/20 flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           Expired
         </Badge>
@@ -113,7 +108,7 @@ const AssessmentDetailsPage = () => {
 
     if (!assessment) {
       return (
-        <Badge variant="secondary" className="flex items-center gap-1">
+        <Badge className="bg-zinc-500/10 text-zinc-400 border-zinc-500/20 flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           Not Assigned
         </Badge>
@@ -123,14 +118,14 @@ const AssessmentDetailsPage = () => {
     if (assessment.isTaken) {
       if (assessment.assessmentState?.status === 'in_progress') {
         return (
-          <Badge variant="secondary" className="flex items-center gap-1">
+          <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 flex items-center gap-1">
             <Clock className="w-3 h-3" />
             In Progress
           </Badge>
         );
       }
       return (
-        <Badge variant="default" className="flex items-center gap-1">
+        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 flex items-center gap-1">
           <CheckCircle className="w-3 h-3" />
           Completed
         </Badge>
@@ -139,7 +134,7 @@ const AssessmentDetailsPage = () => {
 
     if (assessment?.status === 'active' && assessment?.isActive) {
       return (
-        <Badge variant="default" className="flex items-center gap-1">
+        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 flex items-center gap-1">
           <Play className="w-3 h-3" />
           Available
         </Badge>
@@ -147,7 +142,7 @@ const AssessmentDetailsPage = () => {
     }
 
     return (
-      <Badge variant="secondary" className="flex items-center gap-1">
+      <Badge className="bg-zinc-500/10 text-zinc-400 border-zinc-500/20 flex items-center gap-1">
         <AlertCircle className="w-3 h-3" />
         Not Available
       </Badge>
@@ -161,7 +156,7 @@ const AssessmentDetailsPage = () => {
   };
 
   const handleStartAssessment = async () => {
-    if (isStarting) return; // Prevent multiple clicks
+    if (isStarting) return;
     
     try {
       setIsStarting(true);
@@ -170,18 +165,10 @@ const AssessmentDetailsPage = () => {
         return;
       }
 
-      const result = await startAssessmentMutation.mutateAsync({
+      await startAssessmentMutation.mutateAsync({
         assessmentId,
         userId: user._id,
       });
-
-      // Load any previously saved responses from current state
-
-      // console.log('Result', result);
-      // if (result.data._id) {
-      //   await redirectToTakeAssessment(result.data._id);
-      //   return;
-      // }
 
       toast.success('Assessment started! Good luck!');
     } catch (error: any) {
@@ -196,7 +183,7 @@ const AssessmentDetailsPage = () => {
   const getActionButton = () => {
     if (isExpired()) {
       return (
-        <Button disabled variant="outline" className="w-full">
+        <Button disabled variant="outline" className="w-full bg-white/5 border-white/10 text-zinc-400">
           Assessment Expired
         </Button>
       );
@@ -207,7 +194,7 @@ const AssessmentDetailsPage = () => {
         return (
           <Button 
             onClick={handleStartAssessment} 
-            className="w-full"
+            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
             disabled={isStarting}
           >
             {isStarting ? (
@@ -225,7 +212,7 @@ const AssessmentDetailsPage = () => {
         <Button
           onClick={handleViewResults}
           variant="outline"
-          className="w-full"
+          className="w-full bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
         >
           <Eye className="w-4 h-4 mr-2" />
           View Results
@@ -237,7 +224,7 @@ const AssessmentDetailsPage = () => {
       return (
         <Button 
           onClick={handleStartAssessment} 
-          className="w-full"
+          className="w-full bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white"
           disabled={isStarting}
         >
           {isStarting ? (
@@ -256,7 +243,7 @@ const AssessmentDetailsPage = () => {
     }
 
     return (
-      <Button disabled variant="outline" className="w-full">
+      <Button disabled variant="outline" className="w-full bg-white/5 border-white/10 text-zinc-400">
         Assessment Not Available
       </Button>
     );
@@ -265,246 +252,285 @@ const AssessmentDetailsPage = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <Loading
-          message="Loading assessment details... Behave Like Compiler"
-          size="md"
-        />
+        <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
+          <div className="text-center">
+            <div className="relative inline-flex mb-4">
+              <div className="h-16 w-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-400 animate-spin"></div>
+              <BookOpen className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-indigo-400" />
+            </div>
+            <p className="text-zinc-400">Loading assessment details...</p>
+          </div>
+        </div>
       </DashboardLayout>
     );
   }
 
   if (error || !assessment) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
+      <DashboardLayout>
+        <div className="h-screen w-screen bg-[#0C0C10] flex items-center justify-center">
           <div className="text-center">
-            <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 flex items-center justify-center">
+              <AlertCircle className="h-8 w-8 text-red-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">
               Error Loading Assessment
             </h2>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-zinc-400 mb-4">
               {error || 'Assessment not found'}
             </p>
-            <Button onClick={() => router.back()} variant="outline">
+            <Button 
+              onClick={() => router.back()} 
+              variant="outline"
+              className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Go Back
             </Button>
           </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-gray-900">
-              {assessment.title}
-            </h1>
-            {getStatusBadge()}
-          </div>
-          {assessment.description && (
-            <p className="text-lg text-gray-600 mb-4">
-              {assessment.description}
-            </p>
-          )}
-          {assessment.instruction && (
-            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm font-medium text-blue-800 mb-2">
-                Instructions:
-              </p>
-              <p className="text-blue-700">{assessment.instruction}</p>
-            </div>
-          )}
+      <div className="h-screen w-screen bg-[#0C0C10] relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.15),transparent_50%)]"></div>
+          <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom,rgba(249,115,22,0.1),transparent_50%)]"></div>
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }}></div>
         </div>
 
-        {/* Main Content */}
-        <div className="">
-          {/* Assessment Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Assessment Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Questions
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {assessment.numberOfQuestions || 0}
-                  </p>
+        <div className="relative z-10 h-full w-full overflow-y-auto custom-scrollbar">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            
+            {/* Back Button */}
+            <button
+              onClick={() => router.back()}
+              className="mb-6 flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="text-sm">Back to Assessments</span>
+            </button>
+
+            {/* Header */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-1 bg-gradient-to-b from-indigo-400 to-orange-400 rounded-full"></div>
+                  <h1 className="text-2xl lg:text-3xl font-bold text-white">
+                    {assessment.title}
+                  </h1>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Marks
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {assessment.totalMarks}
-                  </p>
-                </div>
+                {getStatusBadge()}
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Duration</p>
-                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {assessment.duration} minutes
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Status</p>
-                  <p className="text-lg font-semibold text-gray-900 capitalize">
-                    {assessment.status}
-                  </p>
-                </div>
-              </div>
-
-              {assessment.startDate && (
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Start Date
-                  </p>
-                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(assessment.startDate).toLocaleDateString()}
-                  </p>
-                </div>
+              
+              {assessment.description && (
+                <p className="text-zinc-400 text-sm lg:text-base mb-4">
+                  {assessment.description}
+                </p>
               )}
-
-              {assessment.endDate && (
-                <div>
-                  <p className="text-sm font-medium text-gray-500">End Date</p>
-                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(assessment.endDate).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          {/* 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Your Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {userAssessment ? (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Status</p>
-                    <p className="text-lg font-semibold text-gray-900 capitalize">
-                      {userAssessment.isTaken ? 'Taken' : 'Not Taken'}
+              
+              {assessment.instruction && (
+                <div className="mb-4 p-4 bg-indigo-500/5 rounded-xl border border-indigo-500/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Info className="h-4 w-4 text-indigo-400" />
+                    <p className="text-sm font-medium text-indigo-400">
+                      Instructions:
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      Attempts
-                    </p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {userAssessment.isTaken ? '1' : '0'}
-                    </p>
+                  <p className="text-sm text-zinc-300">{assessment.instruction}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Assessment Details Card */}
+              <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                <div className="px-5 py-4 border-b border-white/10 bg-white/5">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-indigo-400" />
+                    <h2 className="text-sm font-semibold text-white">Assessment Details</h2>
                   </div>
                 </div>
-
-                {userAssessment.assessmentState && (
-                  <div className="space-y-3">
+                <div className="p-5 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">
-                        Current Status
-                      </p>
-                      <p className="text-lg font-semibold text-gray-900 capitalize">
-                        {userAssessment.assessmentState.status.replace(
-                          '_',
-                          ' '
-                        )}
+                      <p className="text-xs font-medium text-zinc-500 mb-1">Total Questions</p>
+                      <p className="text-2xl font-bold text-white">
+                        {assessment.numberOfQuestions || 0}
                       </p>
                     </div>
-
-                    {userAssessment.assessmentState.status ===
-                      'in_progress' && (
-                      <>
-                        <div>
-                          <p className="text-sm font-medium text-gray-500">
-                            Time Remaining
-                          </p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            {Math.floor(
-                              userAssessment.assessmentState.timeRemaining / 60
-                            )}
-                            m{' '}
-                            {userAssessment.assessmentState.timeRemaining % 60}s
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-500">
-                            Questions Answered
-                          </p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            {userAssessment.assessmentState.responsesCount} /{' '}
-                            {assessment.questions.length}
-                          </p>
-                        </div>
-                      </>
-                    )}
+                    <div>
+                      <p className="text-xs font-medium text-zinc-500 mb-1">Total Marks</p>
+                      <p className="text-2xl font-bold text-white">
+                        {assessment.totalMarks}
+                      </p>
+                    </div>
                   </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  You are not assigned to this assessment
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs font-medium text-zinc-500 mb-1">Duration</p>
+                      <p className="text-lg font-semibold text-white flex items-center gap-1">
+                        <Timer className="h-4 w-4 text-indigo-400" />
+                        {assessment.duration} minutes
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-zinc-500 mb-1">Status</p>
+                      <p className="text-lg font-semibold text-white capitalize">
+                        {assessment.status}
+                      </p>
+                    </div>
+                  </div>
+
+                  {assessment.startDate && (
+                    <div>
+                      <p className="text-xs font-medium text-zinc-500 mb-1">Start Date</p>
+                      <p className="text-sm text-white flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                        {new Date(assessment.startDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+
+                  {assessment.endDate && (
+                    <div>
+                      <p className="text-xs font-medium text-zinc-500 mb-1">End Date</p>
+                      <p className="text-sm text-white flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5 text-orange-400" />
+                        {new Date(assessment.endDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Your Progress Card */}
+              <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                <div className="px-5 py-4 border-b border-white/10 bg-white/5">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-orange-400" />
+                    <h2 className="text-sm font-semibold text-white">Your Progress</h2>
+                  </div>
+                </div>
+               // Update the Progress Card section to use the correct properties
+<div className="p-5 space-y-4">
+  {assessment.isTaken !== undefined ?(
+    <>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-xs font-medium text-zinc-500 mb-1">Status</p>
+          <p className="text-lg font-semibold text-white capitalize">
+            {assessment.isTaken ? 'Taken' : 'Not Taken'}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-zinc-500 mb-1">Attempts</p>
+          <p className="text-lg font-semibold text-white">
+            {assessment.isTaken ? '1' : '0'}
+          </p>
+        </div>
+      </div>
+
+      {assessment.assessmentState && (
+        <div className="space-y-3">
+          <div>
+            <p className="text-xs font-medium text-zinc-500 mb-1">
+              Current Status
+            </p>
+            <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20">
+              {assessment.assessmentState.status.replace('_', ' ')}
+            </Badge>
+          </div>
+
+          {assessment.assessmentState.status === 'in_progress' && (
+            <>
+              <div>
+                <p className="text-xs font-medium text-zinc-500 mb-1">
+                  Time Remaining
+                </p>
+                <p className="text-lg font-semibold text-white">
+                  {Math.floor(assessment.assessmentState.timeRemaining / 60)}
+                  m{' '}
+                  {assessment.assessmentState.timeRemaining % 60}s
                 </p>
               </div>
-            )}
-          </CardContent>
-        </Card> */}
+              <div>
+                <p className="text-xs font-medium text-zinc-500 mb-1">
+                  Questions Answered
+                </p>
+                <p className="text-lg font-semibold text-white">
+                  {assessment.assessmentState.responsesCount} /{' '}
+                  {assessment.numberOfQuestions || 0}
+                </p>
+              </div>
+            </>
+          )}
         </div>
-
-        {/* Action Section */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Actions</CardTitle>
-            <CardDescription>
-              {isExpired()
-                ? 'This assessment has expired and cannot be taken'
-                : !assessment
-                  ? 'You are not assigned to this assessment'
-                  : assessment.isTaken
-                    ? 'You have already taken this assessment'
-                    : 'You can start this assessment when ready'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>{getActionButton()}</CardContent>
-        </Card>
-
-        {/* {assessment.createdBy && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Created By</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg font-semibold text-gray-900">
-              {assessment.createdBy.fullName ||
-                `${assessment.createdBy.firstName} ${assessment.createdBy.lastName}`}
-            </p>
-            <p className="text-sm text-gray-500">
-              {assessment.createdBy.email}
-            </p>
-          </CardContent>
-        </Card>
-      )} */}
+      )}
+    </>
+  ) : (
+    <div className="text-center py-8">
+      <div className="h-12 w-12 bg-white/5 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <Users className="h-6 w-6 text-zinc-500" />
       </div>
+      <p className="text-sm text-zinc-400">
+        You are not assigned to this assessment
+      </p>
+    </div>
+  )}
+</div>
+              </div>
+            </div>
+
+            {/* Action Section */}
+            <div className="mt-6 bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+              <div className="px-5 py-4 border-b border-white/10 bg-white/5">
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-indigo-400" />
+                  <h2 className="text-sm font-semibold text-white">Actions</h2>
+                </div>
+                <p className="text-xs text-zinc-500 mt-1 ml-6">
+                  {isExpired()
+                    ? 'This assessment has expired and cannot be taken'
+                    : !assessment
+                      ? 'You are not assigned to this assessment'
+                      : assessment.isTaken
+                        ? 'You have already taken this assessment'
+                        : 'You can start this assessment when ready'}
+                </p>
+              </div>
+              <div className="p-5">
+                {getActionButton()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255,255,255,0.03);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.1);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255,255,255,0.2);
+        }
+      `}</style>
     </DashboardLayout>
   );
 };

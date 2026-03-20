@@ -12,11 +12,22 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  Plus, 
+  AlertCircle, 
+  ChevronDown, 
+  ChevronUp, 
+  Layers, 
+  HelpCircle,
+  FileQuestion,
+  MinusCircle,
+  CheckCircle2
+} from 'lucide-react';
 import { AssessmentFormData, User, QuestionFormData } from '../types';
 import { AssessmentType } from '@/lib/types/assessment';
 import { QuestionForm } from './QuestionForm';
 import { QuestionDisplay } from './QuestionDisplay';
+import { cn } from '@/lib/utils';
 
 interface QuestionsManagementProps {
   form: UseFormReturn<AssessmentFormData>;
@@ -120,21 +131,49 @@ export function QuestionsManagement({
     return null;
   }
 
+  const totalQuestions = watchedQuestionsToCreate.length;
+  const totalMarks = calculateTotalMarks();
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          Questions
-          <div className="flex items-center space-x-2">
+    <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-white/10 bg-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <FileQuestion className="h-4 w-4 text-indigo-400" />
+              <h2 className="text-sm font-semibold text-white">MCQ Questions</h2>
+            </div>
+            <p className="text-xs text-zinc-500 mt-1 ml-6">
+              Add multiple choice questions to your assessment
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Stats Badges */}
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
+                {totalQuestions} Questions
+              </Badge>
+              <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">
+                {totalMarks} Marks
+              </Badge>
+              {remainingMarks > 0 && (
+                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                  {remainingMarks} Remaining
+                </Badge>
+              )}
+            </div>
+            
             {sections.length > 0 && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={collapseAllSections}
+                  className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 hover:text-white"
                 >
-                  <ChevronDown className="h-4 w-4 mr-2" />
+                  <ChevronDown className="h-3.5 w-3.5 mr-1" />
                   Collapse All
                 </Button>
                 <Button
@@ -142,123 +181,137 @@ export function QuestionsManagement({
                   variant="outline"
                   size="sm"
                   onClick={expandAllSections}
+                  className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 hover:text-white"
                 >
-                  <ChevronUp className="h-4 w-4 mr-2" />
+                  <ChevronUp className="h-3.5 w-3.5 mr-1" />
                   Expand All
                 </Button>
               </div>
             )}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (sections.length > 0) {
-                  setNewQuestion({
-                    ...newQuestion,
-                    section: sections[0],
-                  });
-                  setAddingToSection(sections[0]);
-                  setIsAddingQuestion(true);
-                }
-              }}
-              disabled={totalMarksError !== null || sections.length === 0}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add New Question
-            </Button>
           </div>
-        </CardTitle>
-        <CardDescription>
-          {sections.length === 0
-            ? 'Create sections first to add questions'
-            : 'Questions organized by sections'}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+        </div>
+      </div>
+
+      <div className="p-5 space-y-6">
         {/* Total Marks Validation Error */}
         {totalMarksError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{totalMarksError}</AlertDescription>
+          <Alert className="border-red-500/50 bg-red-500/10">
+            <AlertCircle className="h-4 w-4 text-red-400" />
+            <AlertDescription className="text-sm text-red-400">
+              {totalMarksError}
+            </AlertDescription>
           </Alert>
+        )}
+
+        {/* No Sections Warning */}
+        {sections.length === 0 && (
+          <div className="text-center py-8">
+            <div className="h-12 w-12 bg-white/5 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Layers className="h-6 w-6 text-zinc-500" />
+            </div>
+            <p className="text-sm text-zinc-400">No sections created yet</p>
+            <p className="text-xs text-zinc-600 mt-1">
+              Create sections first to add questions
+            </p>
+          </div>
         )}
 
         {/* Questions by Section */}
         {sections.length > 0 && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {sections.map((section) => {
               const sectionQuestions = questionsBySection[section] || [];
               const sectionMarks = sectionQuestions.reduce(
                 (sum, q) => sum + (q.marks || 0),
                 0
               );
+              const isCollapsed = collapsedSections.has(section);
+              const isAddingToThisSection = isAddingQuestion && addingToSection === section;
 
               return (
-                <div key={section} className="border rounded-lg p-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
+                <div
+                  key={section}
+                  className="bg-white/5 rounded-xl border border-white/10 overflow-hidden"
+                >
+                  {/* Section Header */}
+                  <div className="px-4 py-3 bg-white/5 border-b border-white/10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleSectionCollapse(section)}
+                          className="p-1 text-zinc-500 hover:text-white transition-colors"
+                        >
+                          {isCollapsed ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronUp className="h-4 w-4" />
+                          )}
+                        </button>
+                        <div className="flex items-center gap-2">
+                          <Layers className="h-4 w-4 text-indigo-400" />
+                          <h3 className="text-sm font-semibold text-white">{section}</h3>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20 text-xs">
+                            {sectionQuestions.length} Q
+                          </Badge>
+                          <Badge className="bg-orange-500/10 text-orange-400 border-orange-500/20 text-xs">
+                            {sectionMarks} marks
+                          </Badge>
+                        </div>
+                      </div>
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        onClick={() => toggleSectionCollapse(section)}
-                        className="p-1"
+                        onClick={() => handleAddQuestionToSection(section)}
+                        disabled={totalMarksError !== null}
+                        className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 hover:text-white"
                       >
-                        {collapsedSections.has(section) ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronUp className="h-4 w-4" />
-                        )}
+                        <Plus className="h-3.5 w-3.5 mr-1" />
+                        Add Question
                       </Button>
-                      <h3 className="text-lg font-semibold">{section}</h3>
-                      <Badge variant="outline" className="text-xs">
-                        {sectionQuestions.length} questions • {sectionMarks}{' '}
-                        marks
-                      </Badge>
                     </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleAddQuestionToSection(section)}
-                      disabled={totalMarksError !== null}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Question
-                    </Button>
                   </div>
 
-                  {!collapsedSections.has(section) && (
-                    <>
+                  {/* Section Content */}
+                  {!isCollapsed && (
+                    <div className="p-4 space-y-3">
                       {/* Add Question Form for this section */}
-                      {isAddingQuestion && addingToSection === section && (
-                        <QuestionForm
-                          question={newQuestion}
-                          onQuestionChange={setNewQuestion}
-                          onSave={onAddQuestion}
-                          onCancel={() => {
-                            setIsAddingQuestion(false);
-                            setAddingToSection(null);
-                          }}
-                          sections={sections}
-                          remainingMarks={remainingMarks}
-                        />
+                      {isAddingToThisSection && (
+                        <div className="mb-4">
+                          <QuestionForm
+                            question={newQuestion}
+                            onQuestionChange={setNewQuestion}
+                            onSave={onAddQuestion}
+                            onCancel={() => {
+                              setIsAddingQuestion(false);
+                              setAddingToSection(null);
+                            }}
+                            sections={sections}
+                            remainingMarks={remainingMarks}
+                          />
+                        </div>
                       )}
 
-                      {sectionQuestions.length === 0 ? (
-                        <p className="text-sm text-gray-500 italic">
-                          No questions in this section yet.
-                        </p>
+                      {sectionQuestions.length === 0 && !isAddingToThisSection ? (
+                        <div className="text-center py-8">
+                          <div className="h-10 w-10 bg-white/5 rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <HelpCircle className="h-5 w-5 text-zinc-500" />
+                          </div>
+                          <p className="text-xs text-zinc-500">No questions in this section yet</p>
+                          <p className="text-xs text-zinc-600 mt-1">
+                            Click "Add Question" to get started
+                          </p>
+                        </div>
                       ) : (
                         <div className="space-y-3">
-                          {sectionQuestions.map((question, index) => {
-                            const questionIndex =
-                              watchedQuestionsToCreate.findIndex(
-                                (q) => q === question
-                              );
-                            const isEditing =
-                              editingQuestionIndex === questionIndex;
+                          {sectionQuestions.map((question, idx) => {
+                            const questionIndex = watchedQuestionsToCreate.findIndex(
+                              (q) => q === question
+                            );
+                            const isEditing = editingQuestionIndex === questionIndex;
 
                             if (isEditing) {
                               return (
@@ -291,7 +344,7 @@ export function QuestionsManagement({
                           })}
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
               );
@@ -301,39 +354,35 @@ export function QuestionsManagement({
 
         {/* Questions without section */}
         {questionsWithoutSection.length > 0 && (
-          <div className="border rounded-lg p-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleSectionCollapse('unassigned')}
-                  className="p-1"
-                >
-                  {collapsedSections.has('unassigned') ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronUp className="h-4 w-4" />
-                  )}
-                </Button>
-                <h3 className="text-lg font-semibold text-amber-600">
-                  Unassigned Questions
-                </h3>
-                <Badge variant="outline" className="text-xs">
-                  {questionsWithoutSection.length} questions •{' '}
-                  {questionsWithoutSection.reduce(
-                    (sum, q) => sum + (q.marks || 0),
-                    0
-                  )}{' '}
-                  marks
-                </Badge>
+          <div className="bg-amber-500/5 rounded-xl border border-amber-500/20 overflow-hidden">
+            <div className="px-4 py-3 bg-amber-500/10 border-b border-amber-500/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleSectionCollapse('unassigned')}
+                    className="p-1 text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    {collapsedSections.has('unassigned') ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronUp className="h-4 w-4" />
+                    )}
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-amber-400" />
+                    <h3 className="text-sm font-semibold text-amber-400">Unassigned Questions</h3>
+                  </div>
+                  <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-xs">
+                    {questionsWithoutSection.length} Q
+                  </Badge>
+                </div>
               </div>
             </div>
 
             {!collapsedSections.has('unassigned') && (
-              <div className="space-y-3">
-                {questionsWithoutSection.map((question, index) => {
+              <div className="p-4 space-y-3">
+                {questionsWithoutSection.map((question, idx) => {
                   const questionIndex = watchedQuestionsToCreate.findIndex(
                     (q) => q === question
                   );
@@ -370,15 +419,18 @@ export function QuestionsManagement({
         )}
 
         {/* No questions message */}
-        {questionArray.fields.length === 0 && sections.length > 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <p>
-              No questions added yet. Click "Add Question" in any section to get
-              started.
+        {questionArray.fields.length === 0 && sections.length > 0 && !isAddingQuestion && (
+          <div className="text-center py-8">
+            <div className="h-12 w-12 bg-white/5 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <FileQuestion className="h-6 w-6 text-zinc-500" />
+            </div>
+            <p className="text-sm text-zinc-400">No questions added yet</p>
+            <p className="text-xs text-zinc-600 mt-1">
+              Click "Add Question" in any section to get started
             </p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

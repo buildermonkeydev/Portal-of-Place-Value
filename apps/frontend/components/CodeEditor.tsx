@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
@@ -51,10 +50,23 @@ import {
   Clock,
   MemoryStick,
   Code,
-  Save,
   Info,
   Trash2,
   Plus,
+  Sword,
+  Shield,
+  Zap,
+  Skull,
+  Scroll,
+  Crosshair,
+  Flame,
+  Swords,
+  Crown,
+  Target,
+  Brain,
+  Cpu,
+  Gauge,
+  Sparkles,
 } from 'lucide-react';
 
 // Import Ace editor themes and modes
@@ -69,7 +81,7 @@ import 'ace-builds/src-noconflict/theme-twilight';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'ace-builds/src-noconflict/theme-dracula';
 import 'ace-builds/src-noconflict/ext-language_tools';
-import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 const THEMES = [
   { id: 'monokai', name: 'Monokai Dark', type: 'dark' },
@@ -90,11 +102,8 @@ export const CodeEditor: React.FC = () => {
     selectLanguage,
     updateSourceCode,
     updateStdin,
-    updateExpectedOutput,
     executeCode,
-    submitCode,
     clearResult,
-    reset,
   } = useCodeExecution();
 
   const [editorTheme, setEditorTheme] = useState('monokai');
@@ -125,35 +134,35 @@ export const CodeEditor: React.FC = () => {
 
   const getStatusIcon = () => {
     if (state.isExecuting) {
-      return <Loader2 className="h-4 w-4 animate-spin text-blue-600" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-indigo-400" />;
     }
     if (state.executionResult) {
       if (state.executionResult.status.id === 3) {
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className="h-4 w-4 text-green-400" />;
       } else if (state.executionResult.status.id >= 4) {
-        return <XCircle className="h-4 w-4 text-red-600" />;
+        return <XCircle className="h-4 w-4 text-red-400" />;
       }
     }
-    return <Terminal className="h-4 w-4 text-gray-400" />;
+    return <Terminal className="h-4 w-4 text-zinc-400" />;
   };
 
   const getStatusColor = () => {
-    if (state.isExecuting) return 'bg-blue-50 text-blue-700 border-blue-200';
+    if (state.isExecuting) return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
     if (state.executionResult) {
       if (state.executionResult.status.id === 3)
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-green-500/10 text-green-400 border-green-500/20';
       if (state.executionResult.status.id >= 4)
-        return 'bg-red-50 text-red-700 border-red-200';
+        return 'bg-red-500/10 text-red-400 border-red-500/20';
     }
-    return 'bg-gray-50 text-gray-600 border-gray-200';
+    return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
   };
 
   const getStatusText = () => {
-    if (state.isExecuting) return 'Executing...';
+    if (state.isExecuting) return 'Executing spell...';
     if (state.executionResult) {
       return state.executionResult.status.description;
     }
-    return 'Ready';
+    return 'Ready for battle';
   };
 
   const handleCopyCode = () => {
@@ -164,7 +173,7 @@ export const CodeEditor: React.FC = () => {
     const element = document.createElement('a');
     const file = new Blob([state.sourceCode], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = `code.${
+    element.download = `spell.${
       state.selectedLanguage?.name.toLowerCase() || 'txt'
     }`;
     document.body.appendChild(element);
@@ -187,7 +196,7 @@ export const CodeEditor: React.FC = () => {
   // Input dialog handlers
   const handleRunClick = () => {
     setShowInputDialog(true);
-    setActiveResultTab('output'); // Switch to output tab when running
+    setActiveResultTab('output');
   };
 
   const handleAddInput = () => {
@@ -210,7 +219,6 @@ export const CodeEditor: React.FC = () => {
     const stdin = inputsList.join('\n');
     updateStdin(stdin);
     setShowInputDialog(false);
-    // Set flag to execute after stdin state updates
     setShouldExecuteAfterStdinUpdate(true);
   };
 
@@ -230,35 +238,33 @@ export const CodeEditor: React.FC = () => {
   return (
     <TooltipProvider>
       <div
-        className={`${
-          isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'w-full h-screen'
-        } flex flex-col`}
+        className={cn(
+          "bg-[#0C0C10] text-white",
+          isFullscreen ? 'fixed inset-0 z-50' : 'w-full h-screen'
+        )}
       >
-        {/* Header */}
-        <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+        {/* Header - War Room */}
+        <header className="border-b border-white/10 bg-[#0C0C10]/80 backdrop-blur-sm sticky top-0 z-10">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Image
-                  src={'/logo.png'}
-                  width={100}
-                  height={100}
-                  alt="compiler"
-                  className="w-full max-w-[200px] h-auto"
-                />
+                <Swords className="h-6 w-6 text-indigo-400" />
+                <span className="text-xl font-bold text-white tracking-tight">
+                  Code Forge
+                </span>
               </div>
 
-              <Separator orientation="vertical" className="h-8" />
+              <Separator orientation="vertical" className="h-8 bg-white/10" />
 
               <div className="flex items-center space-x-2">
                 {getStatusIcon()}
-                <Badge variant="outline" className={getStatusColor()}>
+                <Badge variant="outline" className={cn("border", getStatusColor())}>
                   {getStatusText()}
                 </Badge>
                 {state.executionResult?.execution_time && (
                   <Badge
                     variant="outline"
-                    className="bg-blue-50 text-blue-700 border-blue-200"
+                    className="bg-blue-500/10 text-blue-400 border-blue-500/20"
                   >
                     <Clock className="h-3 w-3 mr-1" />
                     {state.executionResult.execution_time}ms
@@ -268,7 +274,7 @@ export const CodeEditor: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-2">
-              {/* Language Selector */}
+              {/* Language Selector - Spell Selection */}
               <Select
                 value={state.selectedLanguage?.id.toString() || ''}
                 onValueChange={(value) => {
@@ -278,17 +284,18 @@ export const CodeEditor: React.FC = () => {
                   if (language) selectLanguage(language);
                 }}
               >
-                <SelectTrigger className="w-40 h-9">
-                  <SelectValue placeholder="Language" />
+                <SelectTrigger className="w-40 h-9 bg-white/5 border-white/10 text-white">
+                  <SelectValue placeholder="Choose spell" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                   {languages.map((language) => (
                     <SelectItem
                       key={language.id}
                       value={language.id.toString()}
+                      className="hover:bg-white/5 focus:bg-white/5"
                     >
                       <div className="flex items-center space-x-2">
-                        <Code className="w-4 h-4" />
+                        <Code className="w-4 h-4 text-indigo-400" />
                         <span>{language.name}</span>
                       </div>
                     </SelectItem>
@@ -296,9 +303,9 @@ export const CodeEditor: React.FC = () => {
                 </SelectContent>
               </Select>
 
-              <Separator orientation="vertical" className="h-6" />
+              <Separator orientation="vertical" className="h-6 bg-white/10" />
 
-              {/* Action Buttons */}
+              {/* Action Buttons - Battle Commands */}
               <div className="flex items-center space-x-1">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -306,36 +313,42 @@ export const CodeEditor: React.FC = () => {
                       onClick={handleRunClick}
                       disabled={!state.selectedLanguage || state.isExecuting}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0"
                     >
                       <Play className="h-4 w-4 mr-2" />
-                      Run
+                      Cast Spell
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Execute code (Ctrl+Enter)</TooltipContent>
+                  <TooltipContent className="bg-[#1A1A2A] border-white/10 text-white">
+                    <p>Execute code (Ctrl+Enter)</p>
+                  </TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={clearResult} variant="ghost" size="sm">
+                    <Button onClick={clearResult} variant="ghost" size="sm" className="text-zinc-400 hover:text-white hover:bg-white/5">
                       <RotateCcw className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Clear results</TooltipContent>
+                  <TooltipContent className="bg-[#1A1A2A] border-white/10 text-white">
+                    <p>Clear results</p>
+                  </TooltipContent>
                 </Tooltip>
               </div>
 
-              <Separator orientation="vertical" className="h-6" />
+              <Separator orientation="vertical" className="h-6 bg-white/10" />
 
-              {/* Utility Buttons */}
+              {/* Utility Buttons - Arsenal */}
               <div className="flex items-center space-x-1">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleCopyCode} variant="ghost" size="sm">
+                    <Button onClick={handleCopyCode} variant="ghost" size="sm" className="text-zinc-400 hover:text-white hover:bg-white/5">
                       <Copy className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Copy code</TooltipContent>
+                  <TooltipContent className="bg-[#1A1A2A] border-white/10 text-white">
+                    <p>Copy spell</p>
+                  </TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
@@ -344,11 +357,14 @@ export const CodeEditor: React.FC = () => {
                       onClick={handleDownloadCode}
                       variant="ghost"
                       size="sm"
+                      className="text-zinc-400 hover:text-white hover:bg-white/5"
                     >
                       <Download className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Download code</TooltipContent>
+                  <TooltipContent className="bg-[#1A1A2A] border-white/10 text-white">
+                    <p>Download spell</p>
+                  </TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
@@ -359,11 +375,14 @@ export const CodeEditor: React.FC = () => {
                       onClick={() =>
                         document.getElementById('file-upload')?.click()
                       }
+                      className="text-zinc-400 hover:text-white hover:bg-white/5"
                     >
                       <Upload className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Upload file</TooltipContent>
+                  <TooltipContent className="bg-[#1A1A2A] border-white/10 text-white">
+                    <p>Upload spellbook</p>
+                  </TooltipContent>
                 </Tooltip>
 
                 <input
@@ -380,6 +399,7 @@ export const CodeEditor: React.FC = () => {
                       onClick={() => setIsFullscreen(!isFullscreen)}
                       variant="ghost"
                       size="sm"
+                      className="text-zinc-400 hover:text-white hover:bg-white/5"
                     >
                       {isFullscreen ? (
                         <Minimize2 className="h-4 w-4" />
@@ -388,29 +408,31 @@ export const CodeEditor: React.FC = () => {
                       )}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Toggle fullscreen</TooltipContent>
+                  <TooltipContent className="bg-[#1A1A2A] border-white/10 text-white">
+                    <p>Toggle fullscreen</p>
+                  </TooltipContent>
                 </Tooltip>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Main Content */}
+        {/* Main Content - Battle Arena */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Code Editor Section */}
+          {/* Code Editor Section - Spell Forge */}
           <div className="flex-1 flex flex-col">
-            {/* Editor Settings Bar */}
-            <div className="border-b bg-gray-50/50 px-6 py-2 flex items-center justify-between">
+            {/* Editor Settings Bar - Enchantments */}
+            <div className="border-b border-white/10 bg-white/5 px-6 py-2 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <Label className="text-sm font-medium">Theme:</Label>
+                  <Label className="text-sm font-medium text-zinc-400">Theme:</Label>
                   <Select value={editorTheme} onValueChange={setEditorTheme}>
-                    <SelectTrigger className="w-32 h-8">
+                    <SelectTrigger className="w-32 h-8 bg-white/5 border-white/10 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                       {THEMES.map((theme) => (
-                        <SelectItem key={theme.id} value={theme.id}>
+                        <SelectItem key={theme.id} value={theme.id} className="hover:bg-white/5">
                           {theme.name}
                         </SelectItem>
                       ))}
@@ -419,17 +441,17 @@ export const CodeEditor: React.FC = () => {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Label className="text-sm font-medium">Size:</Label>
+                  <Label className="text-sm font-medium text-zinc-400">Size:</Label>
                   <Select
                     value={fontSize.toString()}
                     onValueChange={(v) => setFontSize(Number(v))}
                   >
-                    <SelectTrigger className="w-20 h-8">
+                    <SelectTrigger className="w-20 h-8 bg-white/5 border-white/10 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                       {FONT_SIZES.map((size) => (
-                        <SelectItem key={size} value={size.toString()}>
+                        <SelectItem key={size} value={size.toString()} className="hover:bg-white/5">
                           {size}px
                         </SelectItem>
                       ))}
@@ -439,8 +461,8 @@ export const CodeEditor: React.FC = () => {
               </div>
 
               {state.selectedLanguage && (
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <FileText className="w-4 h-4" />
+                <div className="flex items-center space-x-2 text-sm text-zinc-400">
+                  <Scroll className="w-4 h-4 text-indigo-400" />
                   <span>{state.selectedLanguage.name}</span>
                   <span>•</span>
                   <span>Lines: {state.sourceCode.split('\n').length}</span>
@@ -448,8 +470,8 @@ export const CodeEditor: React.FC = () => {
               )}
             </div>
 
-            {/* Editor */}
-            <div className="flex-1 bg-white">
+            {/* Editor - Spell Writing Chamber */}
+            <div className="flex-1 bg-[#0C0C10]">
               {state.selectedLanguage ? (
                 <AceEditor
                   mode={state.selectedLanguage.ace_mode}
@@ -489,26 +511,26 @@ export const CodeEditor: React.FC = () => {
                   ]}
                 />
               ) : (
-                <div className="h-full flex items-center justify-center bg-gray-50">
+                <div className="h-full flex items-center justify-center">
                   <div className="text-center">
                     {isLoadingLanguages ? (
                       <div className="flex items-center space-x-3">
-                        <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-                        <span className="text-gray-600">
-                          Loading languages...
+                        <Loader2 className="h-6 w-6 animate-spin text-indigo-400" />
+                        <span className="text-zinc-400">
+                          Loading spells...
                         </span>
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto">
-                          <Code className="w-8 h-8 text-white" />
+                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto border border-indigo-500/30">
+                          <Sword className="w-8 h-8 text-indigo-400" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            Welcome to CodeStudio Pro
+                          <h3 className="text-lg font-semibold text-white">
+                            Welcome to the Code Forge
                           </h3>
-                          <p className="text-gray-600">
-                            Select a programming language to start coding
+                          <p className="text-zinc-400">
+                            Select a spell to begin your incantation
                           </p>
                         </div>
                       </div>
@@ -519,12 +541,12 @@ export const CodeEditor: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Panel - Results */}
-          <div className="w-96 border-l bg-gray-50/50 flex flex-col">
-            <div className="border-b bg-white px-4 py-3">
-              <h3 className="font-semibold text-gray-900 flex items-center space-x-2">
-                <Terminal className="w-4 h-4" />
-                <span>Execution Results</span>
+          {/* Right Panel - Battle Results */}
+          <div className="w-96 border-l border-white/10 bg-white/5 flex flex-col">
+            <div className="border-b border-white/10 bg-white/5 px-4 py-3">
+              <h3 className="font-semibold text-white flex items-center space-x-2">
+                <Terminal className="w-4 h-4 text-indigo-400" />
+                <span>Battle Results</span>
               </h3>
             </div>
 
@@ -533,16 +555,16 @@ export const CodeEditor: React.FC = () => {
               onValueChange={setActiveResultTab}
               className="flex-1 flex flex-col h-full"
             >
-              <TabsList className="grid grid-cols-2 m-4 mb-2">
-                <TabsTrigger value="output" className="text-xs">
+              <TabsList className="grid grid-cols-2 m-4 mb-2 bg-white/5">
+                <TabsTrigger value="output" className="text-xs data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-400">
                   <Terminal className="w-3 h-3 mr-1" />
                   Output
                 </TabsTrigger>
-                <TabsTrigger value="info" className="text-xs">
+                <TabsTrigger value="info" className="text-xs data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-400">
                   <Info className="w-3 h-3 mr-1" />
-                  Info
+                  Intel
                   {state.executionResult?.execution_time && (
-                    <div className="ml-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                    <div className="ml-1 w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
                   )}
                 </TabsTrigger>
               </TabsList>
@@ -551,46 +573,46 @@ export const CodeEditor: React.FC = () => {
                 <TabsContent value="output" className="h-full mt-0">
                   <ScrollArea className="h-full">
                     <div className="space-y-4">
-                      {/* Error Display */}
+                      {/* Error Display - Failed Spells */}
                       {state.error && (
-                        <Card className="border-red-200 bg-red-50">
+                        <Card className="border-red-500/20 bg-red-500/5">
                           <CardHeader className="pb-3">
-                            <CardTitle className="text-red-800 text-sm flex items-center space-x-2">
-                              <AlertCircle className="h-4 w-4" />
-                              <span>Error</span>
+                            <CardTitle className="text-red-400 text-sm flex items-center space-x-2">
+                              <Skull className="h-4 w-4" />
+                              <span>Spell Backfired</span>
                             </CardTitle>
                           </CardHeader>
                           <CardContent className="pt-0">
-                            <pre className="text-red-700 text-sm whitespace-pre-wrap font-mono">
+                            <pre className="text-red-300 text-sm whitespace-pre-wrap font-mono">
                               {state.error}
                             </pre>
                           </CardContent>
                         </Card>
                       )}
 
-                      {/* Execution Results */}
+                      {/* Execution Results - Battle Outcomes */}
                       {state.executionResult ? (
                         <div className="space-y-4">
                           {/* Status Card */}
-                          <Card>
+                          <Card className="bg-white/5 border-white/10">
                             <CardContent className="pt-4">
                               <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium">
-                                  Status
+                                <span className="text-sm font-medium text-zinc-300">
+                                  Battle Status
                                 </span>
-                                <Badge className={getStatusColor()}>
+                                <Badge className={cn("border", getStatusColor())}>
                                   {state.executionResult.status.description}
                                 </Badge>
                               </div>
                               {state.executionResult.execution_time && (
-                                <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                                <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
                                   <div className="flex items-center space-x-2">
-                                    <Clock className="h-4 w-4 text-blue-500" />
-                                    <span className="text-sm font-medium text-gray-700">
-                                      Execution Time
+                                    <Clock className="h-4 w-4 text-indigo-400" />
+                                    <span className="text-sm font-medium text-zinc-300">
+                                      Cast Time
                                     </span>
                                   </div>
-                                  <span className="text-sm text-blue-600 font-mono font-semibold">
+                                  <span className="text-sm text-indigo-400 font-mono font-semibold">
                                     {state.executionResult.execution_time}ms
                                   </span>
                                 </div>
@@ -598,17 +620,17 @@ export const CodeEditor: React.FC = () => {
                             </CardContent>
                           </Card>
 
-                          {/* Output */}
+                          {/* Output - Successful Spells */}
                           {state.executionResult.stdout && (
                             <div className="h-full">
                               <div className="pb-3 flex-1">
-                                <div className="text-sm text-green-700 flex items-center space-x-2">
-                                  <Terminal className="h-4 w-4" />
-                                  <span>Output</span>
+                                <div className="text-sm text-green-400 flex items-center space-x-2">
+                                  <Zap className="h-4 w-4" />
+                                  <span>Spell Effect</span>
                                 </div>
                               </div>
                               <div className="pt-0 flex-1">
-                                <div className="bg-gray-900 text-green-400 p-3 rounded-md font-mono text-sm">
+                                <div className="bg-[#1A1A2A] text-green-400 p-3 rounded-md font-mono text-sm border border-green-500/20">
                                   <pre className="whitespace-pre-wrap break-words ">
                                     {state.executionResult.stdout}
                                   </pre>
@@ -617,17 +639,17 @@ export const CodeEditor: React.FC = () => {
                             </div>
                           )}
 
-                          {/* Error Output */}
+                          {/* Error Output - Failed Spells */}
                           {state.executionResult.stderr && (
                             <div className="h-full">
                               <div className="pb-3">
-                                <CardTitle className="text-sm text-red-600 flex items-center space-x-2">
+                                <CardTitle className="text-sm text-red-400 flex items-center space-x-2">
                                   <XCircle className="h-4 w-4" />
-                                  <span>Error Output</span>
+                                  <span>Corrupted Spell</span>
                                 </CardTitle>
                               </div>
                               <div className="pt-0 flex-1 h-full">
-                                <div className="bg-red-900  text-red-300 p-3 rounded-md font-mono text-sm overflow-auto">
+                                <div className="bg-red-900/20 text-red-300 p-3 rounded-md font-mono text-sm overflow-auto border border-red-500/20">
                                   <pre className="whitespace-pre-wrap">
                                     {state.executionResult.stderr}
                                   </pre>
@@ -638,15 +660,15 @@ export const CodeEditor: React.FC = () => {
 
                           {/* Compile Output */}
                           {state.executionResult.compile_output && (
-                            <Card>
+                            <Card className="bg-white/5 border-white/10">
                               <CardHeader className="pb-3">
-                                <CardTitle className="text-sm text-orange-600 flex items-center space-x-2">
+                                <CardTitle className="text-sm text-orange-400 flex items-center space-x-2">
                                   <Settings className="h-4 w-4" />
-                                  <span>Compile Output</span>
+                                  <span>Enchantment Log</span>
                                 </CardTitle>
                               </CardHeader>
                               <CardContent className="pt-0">
-                                <div className="bg-orange-100 text-orange-800 p-3 rounded-md font-mono text-sm">
+                                <div className="bg-orange-500/10 text-orange-300 p-3 rounded-md font-mono text-sm border border-orange-500/20">
                                   <pre className="whitespace-pre-wrap">
                                     {state.executionResult.compile_output}
                                   </pre>
@@ -656,15 +678,15 @@ export const CodeEditor: React.FC = () => {
                           )}
                         </div>
                       ) : (
-                        <Card className="h-64">
+                        <Card className="bg-white/5 border-white/10 h-64">
                           <CardContent className="h-full flex items-center justify-center">
-                            <div className="text-center text-gray-500">
-                              <Terminal className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                              <p className="text-sm font-medium">
-                                No execution results
+                            <div className="text-center text-zinc-500">
+                              <Target className="w-12 h-12 mx-auto mb-3 opacity-50 text-indigo-400/30" />
+                              <p className="text-sm font-medium text-zinc-400">
+                                No battle results
                               </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                Run your code to see output here
+                              <p className="text-xs text-zinc-500 mt-1">
+                                Cast a spell to see the outcome
                               </p>
                             </div>
                           </CardContent>
@@ -676,10 +698,10 @@ export const CodeEditor: React.FC = () => {
 
                 <TabsContent value="info" className="h-full mt-0">
                   <ScrollArea className="h-full">
-                    <Card>
+                    <Card className="bg-white/5 border-white/10">
                       <CardHeader>
-                        <CardTitle className="text-sm">
-                          Execution Info
+                        <CardTitle className="text-sm text-zinc-300">
+                          Spell Intel
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -688,12 +710,12 @@ export const CodeEditor: React.FC = () => {
                             {state.executionResult.execution_time && (
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
-                                  <Clock className="h-4 w-4 text-gray-500" />
-                                  <span className="text-sm font-medium">
-                                    Execution Time
+                                  <Clock className="h-4 w-4 text-indigo-400" />
+                                  <span className="text-sm font-medium text-zinc-300">
+                                    Cast Time
                                   </span>
                                 </div>
-                                <span className="text-sm text-gray-600 font-mono">
+                                <span className="text-sm text-indigo-400 font-mono">
                                   {state.executionResult.execution_time}ms
                                 </span>
                               </div>
@@ -702,22 +724,22 @@ export const CodeEditor: React.FC = () => {
                             {state.executionResult.memory && (
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
-                                  <MemoryStick className="h-4 w-4 text-gray-500" />
-                                  <span className="text-sm font-medium">
-                                    Memory Usage
+                                  <MemoryStick className="h-4 w-4 text-indigo-400" />
+                                  <span className="text-sm font-medium text-zinc-300">
+                                    Mana Used
                                   </span>
                                 </div>
-                                <span className="text-sm text-gray-600 font-mono">
+                                <span className="text-sm text-indigo-400 font-mono">
                                   {state.executionResult.memory} KB
                                 </span>
                               </div>
                             )}
                           </>
                         ) : (
-                          <div className="text-center text-gray-500 py-8">
-                            <Info className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                            <p className="text-sm">
-                              No execution info available
+                          <div className="text-center text-zinc-500 py-8">
+                            <Brain className="w-8 h-8 mx-auto mb-2 opacity-50 text-indigo-400/30" />
+                            <p className="text-sm text-zinc-400">
+                              No intel available
                             </p>
                           </div>
                         )}
@@ -731,48 +753,36 @@ export const CodeEditor: React.FC = () => {
         </div>
       </div>
 
-      {/* Interactive Input Dialog */}
+      {/* Interactive Input Dialog - Spell Components */}
       <Dialog open={showInputDialog} onOpenChange={setShowInputDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] bg-[#1A1A2A] border-white/10 text-white">
           <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-blue-600" />
-              <span>Program Input</span>
+            <DialogTitle className="flex items-center space-x-2 text-white">
+              <Scroll className="h-5 w-5 text-indigo-400" />
+              <span>Spell Components</span>
             </DialogTitle>
-            <DialogDescription>
-              Add inputs one by one (simulates interactive prompts like{' '}
-              <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">
-                input()
-              </code>
-              ,{' '}
-              <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">
-                scanf()
-              </code>
-              ,{' '}
-              <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">
-                cin
-              </code>
-              )
+            <DialogDescription className="text-zinc-400">
+              Add inputs one by one (like offering ingredients for your spell)
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {/* Input List */}
+            {/* Input List - Components List */}
             {inputsList.length > 0 && (
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Added Inputs:</Label>
-                <ScrollArea className="h-32 border rounded-md p-2">
+                <Label className="text-sm font-medium text-zinc-300">Added Components:</Label>
+                <ScrollArea className="h-32 border border-white/10 rounded-md p-2 bg-white/5">
                   <div className="space-y-1">
                     {inputsList.map((input, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between bg-gray-50 p-2 rounded group"
+                        className="flex items-center justify-between bg-white/5 p-2 rounded group hover:bg-white/10 transition-colors"
                       >
                         <div className="flex items-center space-x-2 flex-1">
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs border-indigo-500/20 text-indigo-400">
                             {index + 1}
                           </Badge>
-                          <code className="text-sm font-mono truncate">
+                          <code className="text-sm font-mono truncate text-zinc-300">
                             {input || '(empty line)'}
                           </code>
                         </div>
@@ -780,9 +790,9 @@ export const CodeEditor: React.FC = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveInput(index)}
-                          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-red-400 hover:bg-red-500/10"
                         >
-                          <Trash2 className="h-3 w-3 text-red-600" />
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
@@ -791,30 +801,31 @@ export const CodeEditor: React.FC = () => {
               </div>
             )}
 
-            {/* Input Field */}
+            {/* Input Field - New Component */}
             <div className="space-y-2">
-              <Label htmlFor="input-field">Enter Input Value:</Label>
+              <Label htmlFor="input-field" className="text-zinc-300">Enter Component:</Label>
               <div className="flex space-x-2">
                 <Input
                   id="input-field"
                   value={currentInput}
                   onChange={(e) => setCurrentInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type input and press Enter or click Add"
-                  className="font-mono"
+                  placeholder="Type input and press Enter"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 font-mono"
                 />
                 <Button
                   onClick={handleAddInput}
                   disabled={!currentInput.trim()}
                   size="sm"
                   variant="outline"
+                  className="border-white/10 hover:bg-white/5 text-zinc-300"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   Add
                 </Button>
               </div>
-              <p className="text-xs text-gray-500">
-                Press Enter to add input quickly
+              <p className="text-xs text-zinc-500">
+                Press Enter to add quickly
               </p>
             </div>
 
@@ -824,10 +835,10 @@ export const CodeEditor: React.FC = () => {
                 onClick={handleClearInputs}
                 variant="ghost"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
               >
                 <Trash2 className="h-3 w-3 mr-1" />
-                Clear All Inputs
+                Clear All Components
               </Button>
             )}
           </div>
@@ -836,21 +847,21 @@ export const CodeEditor: React.FC = () => {
             <Button
               onClick={handleRunWithoutInput}
               variant="outline"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto border-white/10 hover:bg-white/5 text-zinc-300"
             >
-              Skip / No Input Needed
+              Skip / No Components
             </Button>
             <Button
               onClick={handleRunWithInputs}
-              className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
+              className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0"
               disabled={state.isExecuting}
             >
               <Play className="h-4 w-4 mr-2" />
-              Run Code
+              Cast Spell
               {inputsList.length > 0 && (
                 <Badge
                   variant="secondary"
-                  className="ml-2 bg-green-700 text-white"
+                  className="ml-2 bg-white/20 text-white"
                 >
                   {inputsList.length}
                 </Badge>

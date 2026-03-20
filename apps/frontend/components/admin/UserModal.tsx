@@ -41,10 +41,12 @@ import {
   Shield,
   CheckCircle,
   XCircle,
-  Sun,
-  Cloud,
   GraduationCap,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  Key,
+  Users,
+  Briefcase
 } from 'lucide-react';
 import { useCreateUser, useUpdateUser } from '@/lib/hooks/useUsers';
 import {
@@ -55,6 +57,7 @@ import { toast } from 'sonner';
 import { User as UserType, UserRole } from '@/lib/types';
 import { College } from '@/lib/types/college';
 import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -80,8 +83,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
   });
 
   const [newCollegeName, setNewCollegeName] = useState('');
-  const [isCreateCollegeModalOpen, setIsCreateCollegeModalOpen] =
-    useState(false);
+  const [isCreateCollegeModalOpen, setIsCreateCollegeModalOpen] = useState(false);
 
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
@@ -123,9 +125,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
   }, [user, isOpen]);
 
   // Fetch colleges with branch metadata
-  const { data: collegesData, isLoading: isLoadingColleges } =
-    useCollegesWithBranches();
-
+  const { data: collegesData, isLoading: isLoadingColleges } = useCollegesWithBranches();
   const colleges = collegesData || [];
 
   const selectedCollege: College | null = useMemo(() => {
@@ -141,10 +141,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
   if (!isOpen) return null;
 
   const handleInputChange = (field: string, value: string | number | boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleCollegeChange = (collegeId: string) => {
@@ -168,7 +165,6 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
         name: newCollegeName.trim(),
         branches: [],
       });
-
       handleInputChange('collegeId', newCollege._id);
       setNewCollegeName('');
       setIsCreateCollegeModalOpen(false);
@@ -183,13 +179,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
 
     const isAdmin = formData.role === UserRole.ADMIN;
 
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      (!isEditing && !formData.password) ||
-      !formData.mobileNumber
-    ) {
+    if (!formData.firstName || !formData.lastName || !formData.email || (!isEditing && !formData.password) || !formData.mobileNumber) {
       toast.error('Please fill in all required personal information fields');
       return;
     }
@@ -199,12 +189,10 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
         toast.error('Please fill in all required college fields');
         return;
       }
-
       if (formData.collegeYear < 1 || formData.collegeYear > 4) {
         toast.error('Please select a valid college year');
         return;
       }
-
       if (!/^[A-Za-z0-9]+$/.test(formData.registrationNo)) {
         toast.error('Registration number must contain only letters and numbers');
         return;
@@ -213,7 +201,6 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
 
     try {
       const activeCollege = isAdmin ? null : selectedCollege;
-
       if (!isAdmin && !activeCollege) {
         toast.error('Please select a valid college');
         return;
@@ -237,10 +224,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
           updateData.registrationNo = formData.registrationNo;
         }
 
-        await updateUserMutation.mutateAsync({
-          id: user._id,
-          data: updateData,
-        });
+        await updateUserMutation.mutateAsync({ id: user._id, data: updateData });
         toast.success('User updated successfully');
       } else {
         await createUserMutation.mutateAsync({
@@ -281,29 +265,27 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
     <>
       {/* Main Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm"
-          onClick={handleClose}
-        />
-        <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
+        <div className="relative bg-[#0C0C10] rounded-2xl shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden border border-white/10">
+          
           {/* Decorative Elements */}
-          <div className="fixed top-10 right-10 opacity-5 pointer-events-none">
-            <Sun className="h-20 w-20 text-orange-300" />
+          <div className="absolute top-10 right-10 opacity-10 pointer-events-none">
+            <Sparkles className="h-20 w-20 text-indigo-400" />
           </div>
-          <div className="fixed bottom-10 left-10 opacity-5 pointer-events-none">
-            <Cloud className="h-20 w-20 text-sky-300" />
+          <div className="absolute bottom-10 left-10 opacity-10 pointer-events-none">
+            <GraduationCap className="h-20 w-20 text-orange-400" />
           </div>
 
           {/* Header */}
-          <div className="px-8 py-6 border-b border-sky-100 bg-gradient-to-r from-sky-50 via-white to-orange-50">
+          <div className="px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/5 to-transparent">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3">
-                <div className="h-10 w-1 bg-gradient-to-b from-sky-400 to-orange-400 rounded-full"></div>
+                <div className="h-10 w-1 bg-gradient-to-b from-indigo-400 to-orange-400 rounded-full"></div>
                 <div>
-                  <h2 className="text-xl font-semibold bg-gradient-to-r from-sky-700 to-orange-600 bg-clip-text text-transparent">
+                  <h2 className="text-xl font-semibold text-white">
                     {isEditing ? 'Edit User' : 'Create New User'}
                   </h2>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-zinc-400">
                     {isEditing 
                       ? `Editing ${user?.firstName} ${user?.lastName}`
                       : 'Add a new user to the system'}
@@ -312,7 +294,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
               </div>
               <button
                 onClick={handleClose}
-                className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 text-zinc-500 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -320,126 +302,119 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
           </div>
 
           {/* Content */}
-          <div className="px-8 py-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="px-6 py-6 overflow-y-auto max-h-[calc(90vh-140px)] custom-scrollbar">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* Personal Information Card */}
-              <Card className="border-sky-100 shadow-sm overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-sky-50/30 to-orange-50/30 border-b border-sky-100 py-4">
+              <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                <div className="px-5 py-4 border-b border-white/10 bg-white/5">
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-sky-500" />
-                    <CardTitle className="text-sm font-semibold text-gray-700">
-                      Personal Information
-                    </CardTitle>
+                    <User className="h-4 w-4 text-indigo-400" />
+                    <h3 className="text-sm font-semibold text-white">Personal Information</h3>
                   </div>
-                  <CardDescription className="text-xs text-gray-500 ml-6">
+                  <p className="text-xs text-zinc-500 mt-1 ml-6">
                     Basic user details and account information
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-5 space-y-4">
+                  </p>
+                </div>
+                <div className="p-5 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label htmlFor="firstName" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                        First Name <span className="text-sky-400">*</span>
+                      <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                        First Name <span className="text-indigo-400">*</span>
                       </Label>
                       <Input
-                        id="firstName"
                         value={formData.firstName}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
                         placeholder="John"
-                        className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl"
                         required
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="lastName" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                        Last Name <span className="text-sky-400">*</span>
+                      <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                        Last Name <span className="text-indigo-400">*</span>
                       </Label>
                       <Input
-                        id="lastName"
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
                         placeholder="Doe"
-                        className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                      <Mail className="h-3.5 w-3.5 text-sky-400" />
-                      Email Address <span className="text-sky-400">*</span>
+                    <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                      <Mail className="h-3.5 w-3.5 text-indigo-400" />
+                      Email Address <span className="text-indigo-400">*</span>
                     </Label>
                     <Input
-                      id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="john.doe@example.com"
-                      className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl"
                       required
                       disabled={isEditing}
                     />
                     {isEditing && (
-                      <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                      <p className="text-xs text-zinc-500 mt-1">Email cannot be changed</p>
                     )}
                   </div>
 
                   {!isEditing && (
                     <div className="space-y-1.5">
-                      <Label htmlFor="password" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                        <Shield className="h-3.5 w-3.5 text-orange-400" />
-                        Password <span className="text-sky-400">*</span>
+                      <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                        <Key className="h-3.5 w-3.5 text-orange-400" />
+                        Password <span className="text-indigo-400">*</span>
                       </Label>
                       <Input
-                        id="password"
                         type="password"
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         placeholder="••••••••"
-                        className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl"
                         required
                       />
                     </div>
                   )}
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="mobileNumber" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                      <Phone className="h-3.5 w-3.5 text-sky-400" />
-                      Mobile Number <span className="text-sky-400">*</span>
+                    <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                      <Phone className="h-3.5 w-3.5 text-indigo-400" />
+                      Mobile Number <span className="text-indigo-400">*</span>
                     </Label>
                     <Input
-                      id="mobileNumber"
                       value={formData.mobileNumber}
                       onChange={(e) => handleInputChange('mobileNumber', e.target.value)}
                       placeholder="+1 (555) 000-0000"
-                      className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl"
                       required
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="role" className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                    <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
                       <Shield className="h-3.5 w-3.5 text-orange-400" />
-                      User Role <span className="text-sky-400">*</span>
+                      User Role <span className="text-indigo-400">*</span>
                     </Label>
                     <Select
                       value={formData.role}
                       onValueChange={(value) => handleInputChange('role', value as UserRole)}
                     >
-                      <SelectTrigger className="border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
+                      <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl">
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                         <SelectItem value={UserRole.STUDENT}>
                           <div className="flex items-center gap-2">
-                            <GraduationCap className="h-4 w-4 text-sky-500" />
+                            <GraduationCap className="h-4 w-4 text-indigo-400" />
                             <span>Student</span>
                           </div>
                         </SelectItem>
                         <SelectItem value={UserRole.ADMIN}>
                           <div className="flex items-center gap-2">
-                            <Shield className="h-4 w-4 text-purple-500" />
+                            <Shield className="h-4 w-4 text-orange-400" />
                             <span>Admin</span>
                           </div>
                         </SelectItem>
@@ -448,73 +423,68 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                   </div>
 
                   {isEditing && (
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
-                      <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap gap-6 pt-2">
+                      <div className="flex items-center gap-2">
                         <Checkbox
                           id="isActive"
                           checked={formData.isActive}
                           onCheckedChange={(checked) => handleInputChange('isActive', !!checked)}
-                          className="rounded border-sky-300 text-sky-500"
+                          className="border-white/30 data-[state=checked]:bg-emerald-500"
                         />
-                        <Label htmlFor="isActive" className="text-sm text-gray-600 flex items-center gap-1">
+                        <Label htmlFor="isActive" className="text-sm text-zinc-300 flex items-center gap-1 cursor-pointer">
                           {formData.isActive ? (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <CheckCircle className="h-4 w-4 text-emerald-400" />
                           ) : (
-                            <XCircle className="h-4 w-4 text-red-500" />
+                            <XCircle className="h-4 w-4 text-red-400" />
                           )}
                           Active Account
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Checkbox
                           id="isEmailVerified"
                           checked={formData.isEmailVerified}
                           onCheckedChange={(checked) => handleInputChange('isEmailVerified', !!checked)}
-                          className="rounded border-sky-300 text-sky-500"
+                          className="border-white/30 data-[state=checked]:bg-emerald-500"
                         />
-                        <Label htmlFor="isEmailVerified" className="text-sm text-gray-600 flex items-center gap-1">
+                        <Label htmlFor="isEmailVerified" className="text-sm text-zinc-300 flex items-center gap-1 cursor-pointer">
                           {formData.isEmailVerified ? (
-                            <Mail className="h-4 w-4 text-green-500" />
+                            <Mail className="h-4 w-4 text-emerald-400" />
                           ) : (
-                            <Mail className="h-4 w-4 text-orange-500" />
+                            <Mail className="h-4 w-4 text-orange-400" />
                           )}
                           Email Verified
                         </Label>
                       </div>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* College Information Card */}
               {formData.role !== UserRole.ADMIN && (
-                <Card className="border-sky-100 shadow-sm overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-orange-50/30 to-sky-50/30 border-b border-sky-100 py-4">
+                <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-white/10 bg-white/5">
                     <div className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4 text-orange-500" />
-                      <CardTitle className="text-sm font-semibold text-gray-700">
-                        Academic Information
-                      </CardTitle>
+                      <GraduationCap className="h-4 w-4 text-orange-400" />
+                      <h3 className="text-sm font-semibold text-white">Academic Information</h3>
                     </div>
-                    <CardDescription className="text-xs text-gray-500 ml-6">
+                    <p className="text-xs text-zinc-500 mt-1 ml-6">
                       College and academic details
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-5 space-y-4">
+                    </p>
+                  </div>
+                  <div className="p-5 space-y-4">
                     <div className="space-y-1.5">
-                      <Label htmlFor="collegeId" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                        <Building2 className="h-3.5 w-3.5 text-sky-400" />
-                        College <span className="text-sky-400">*</span>
+                      <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                        <Building2 className="h-3.5 w-3.5 text-indigo-400" />
+                        College <span className="text-indigo-400">*</span>
                       </Label>
                       <div className="flex gap-2">
-                        <Select
-                          value={formData.collegeId}
-                          onValueChange={handleCollegeChange}
-                        >
-                          <SelectTrigger className="flex-1 border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
+                        <Select value={formData.collegeId} onValueChange={handleCollegeChange}>
+                          <SelectTrigger className="flex-1 bg-white/5 border-white/10 text-white rounded-xl">
                             <SelectValue placeholder="Select college" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                             {isLoadingColleges ? (
                               <SelectItem value="loading" disabled>
                                 <div className="flex items-center gap-2">
@@ -539,7 +509,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                           type="button"
                           variant="outline"
                           onClick={() => setIsCreateCollegeModalOpen(true)}
-                          className="border-sky-200 hover:bg-sky-50 text-sky-700 rounded-xl px-3"
+                          className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 rounded-xl px-3"
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -547,16 +517,16 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="branchName" className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                      <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
                         <GraduationCap className="h-3.5 w-3.5 text-orange-400" />
-                        Branch / Department <span className="text-sky-400">*</span>
+                        Branch / Department <span className="text-indigo-400">*</span>
                       </Label>
                       <Select
                         value={formData.branchName || undefined}
                         onValueChange={(value) => handleInputChange('branchName', value)}
                         disabled={!selectedCollege || selectedCollege.branches.length === 0}
                       >
-                        <SelectTrigger className="border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl">
                           <SelectValue
                             placeholder={
                               !formData.collegeId
@@ -567,7 +537,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                             }
                           />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                           {selectedCollege && selectedCollege.branches.length > 0 ? (
                             selectedCollege.branches.map((branch) => (
                               <SelectItem key={branch._id} value={branch.name}>
@@ -587,18 +557,18 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label htmlFor="collegeYear" className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                          <Calendar className="h-3.5 w-3.5 text-sky-400" />
-                          College Year <span className="text-sky-400">*</span>
+                        <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                          College Year <span className="text-indigo-400">*</span>
                         </Label>
                         <Select
                           value={formData.collegeYear > 0 ? formData.collegeYear.toString() : undefined}
                           onValueChange={(value) => handleInputChange('collegeYear', parseInt(value))}
                         >
-                          <SelectTrigger className="border-sky-200 focus:border-sky-400 rounded-xl py-2.5 h-auto bg-white/80">
+                          <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl">
                             <SelectValue placeholder="Select year" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-[#1A1A2A] border-white/10 text-white">
                             {[1, 2, 3, 4].map((year) => (
                               <SelectItem key={year} value={year.toString()}>
                                 Year {year}
@@ -609,47 +579,43 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                       </div>
 
                       <div className="space-y-1.5">
-                        <Label htmlFor="registrationNo" className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                        <Label className="text-xs font-medium text-zinc-400 flex items-center gap-1">
                           <Hash className="h-3.5 w-3.5 text-orange-400" />
-                          Registration Number <span className="text-sky-400">*</span>
+                          Registration Number <span className="text-indigo-400">*</span>
                         </Label>
                         <Input
-                          id="registrationNo"
                           value={formData.registrationNo}
                           onChange={(e) => handleRegistrationChange(e.target.value)}
                           placeholder="REG2024001"
-                          className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
+                          className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl uppercase"
                           required
                         />
                       </div>
                     </div>
 
-{/* Validation Hint */}
-{formData.role === UserRole.STUDENT && (
-  <div className="mt-2 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
-    <div className="flex items-start gap-2">
-      <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5" />
-      <div>
-        <p className="text-xs font-medium text-amber-800">Registration number format:</p>
-        <p className="text-xs text-amber-600">Only letters and numbers allowed (no spaces or special characters)</p>
-      </div>
-    </div>
-  </div>
-)}
-                  </CardContent>
-                </Card>
+                    <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/20">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="h-4 w-4 text-amber-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-medium text-amber-400">Registration number format:</p>
+                          <p className="text-xs text-amber-400/70">Only letters and numbers allowed (no spaces or special characters)</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </form>
           </div>
 
           {/* Footer */}
-          <div className="px-8 py-4 border-t border-sky-100 bg-gradient-to-r from-sky-50/30 to-orange-50/30">
+          <div className="px-6 py-4 border-t border-white/10 bg-white/5">
             <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleClose}
-                className="w-full sm:w-auto border-sky-200 hover:bg-sky-50 text-sky-700 rounded-xl px-5 py-2.5 text-sm font-medium"
+                className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 rounded-xl px-5"
               >
                 Cancel
               </Button>
@@ -657,7 +623,7 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                 type="submit"
                 onClick={handleSubmit}
                 disabled={createUserMutation.isPending || updateUserMutation.isPending}
-                className="w-full sm:w-auto bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white rounded-xl px-5 py-2.5 text-sm font-medium shadow-sm min-w-[140px]"
+                className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white rounded-xl px-6 min-w-[140px]"
               >
                 {createUserMutation.isPending || updateUserMutation.isPending ? (
                   <div className="flex items-center justify-center gap-2">
@@ -678,68 +644,74 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
 
       {/* Create College Modal */}
       <Dialog open={isCreateCollegeModalOpen} onOpenChange={setIsCreateCollegeModalOpen}>
-        <DialogContent className="sm:max-w-[400px] p-0 gap-0 overflow-hidden rounded-2xl">
-          <DialogHeader className="p-6 pb-4 bg-gradient-to-r from-sky-50 via-white to-orange-50 border-b border-sky-100">
-            <DialogTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-sky-500" />
+        <DialogContent className="bg-[#0C0C10] border-white/10 rounded-2xl max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-indigo-400" />
               Create College
             </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500 mt-1">
+            <DialogDescription className="text-zinc-400">
               Add a new college to the system. Branches can be added later.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="px-6 py-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="newCollegeName" className="text-xs font-medium text-gray-500">
-                College Name
-              </Label>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-zinc-400">College Name</Label>
               <Input
-                id="newCollegeName"
                 value={newCollegeName}
                 onChange={(e) => setNewCollegeName(e.target.value)}
                 placeholder="e.g., Stanford University"
-                className="border-sky-200 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm bg-white/80"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleCreateCollege();
-                  }
-                }}
+                className="bg-white/5 border-white/10 text-white placeholder:text-zinc-600 rounded-xl"
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateCollege()}
                 autoFocus
               />
             </div>
           </div>
 
-          <DialogFooter className="p-6 pt-4 border-t border-sky-100 bg-gradient-to-r from-sky-50/30 to-orange-50/30">
-            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsCreateCollegeModalOpen(false)}
-                className="border-sky-200 hover:bg-sky-50 text-sky-700 rounded-xl px-4 py-2 text-sm font-medium"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                onClick={handleCreateCollege}
-                disabled={createCollegeMutation.isPending}
-                className="bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white rounded-xl px-4 py-2 text-sm font-medium"
-              >
-                {createCollegeMutation.isPending ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Creating...</span>
-                  </div>
-                ) : (
-                  'Create College'
-                )}
-              </Button>
-            </div>
+          <DialogFooter className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCreateCollegeModalOpen(false)}
+              className="bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCreateCollege}
+              disabled={createCollegeMutation.isPending}
+              className="bg-gradient-to-r from-indigo-500 to-orange-500 hover:from-indigo-600 hover:to-orange-600 text-white rounded-xl"
+            >
+              {createCollegeMutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Creating...</span>
+                </div>
+              ) : (
+                'Create College'
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255,255,255,0.03);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.1);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255,255,255,0.2);
+        }
+      `}</style>
     </>
   );
 }

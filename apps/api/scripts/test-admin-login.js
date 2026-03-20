@@ -8,8 +8,8 @@ const testPassword = 'Admin@123';
 bcrypt.compare(testPassword, storedHash).then(isMatch => {
   console.log('Password test result:', isMatch);
   if (isMatch) {
-    console.log('✅ Password matches! The issue is NOT with the password hash.');
+    console.log(' Password matches! The issue is NOT with the password hash.');
   } else {
-    console.log('❌ Password does NOT match! The hash is for a different password.');
+    console.log(' Password does NOT match! The hash is for a different password.');
   }
 });

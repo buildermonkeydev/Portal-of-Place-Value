@@ -5,16 +5,16 @@
 
 set -e
 
-echo "🚀 Deploying Bl-compiler Compiler..."
+echo "🚀 Deploying place value Portal Compiler..."
 
 # Create application directory
-APP_DIR="/opt/Bl-compiler"
+APP_DIR="/opt/place value Portal"
 sudo mkdir -p $APP_DIR
 sudo chown $USER:$USER $APP_DIR
 
 # Clone repository (replace with your actual repo)
 cd $APP_DIR
-git clone https://github.com/yourusername/Bl-compiler-compiler.git .
+git clone https://github.com/yourusername/place value Portal-compiler.git .
 
 # Install dependencies
 pnpm install
@@ -26,15 +26,15 @@ pnpm build
 cat > .env << EOF
 # Application
 NODE_ENV=production
-APP_NAME=Bl-compiler Compiler
+APP_NAME=place value Portal Compiler
 APP_VERSION=1.0.0
 APP_URL=https://yourdomain.com
 APP_PORT=3000
 APP_HOST=0.0.0.0
 
 # Database
-MONGODB_URI=mongodb://localhost:27017/Bl-compiler
-MONGODB_DB_NAME=Bl-compiler
+MONGODB_URI=mongodb://localhost:27017/place value Portal
+MONGODB_DB_NAME=place value Portal
 
 # Redis
 REDIS_HOST=localhost
@@ -72,7 +72,7 @@ REDIS_SESSION_MAX_PER_USER=5
 
 # Logging
 LOG_LEVEL=info
-LOG_DIR=/opt/Bl-compiler/logs
+LOG_DIR=/opt/place value Portal/logs
 EOF
 
 # Create logs directory
@@ -85,7 +85,7 @@ module.exports = {
     {
       name: 'api',
       script: 'apps/api/dist/index.js',
-      cwd: '/opt/Bl-compiler',
+      cwd: '/opt/place value Portal',
       instances: 'max',
       exec_mode: 'cluster',
       env: {
@@ -102,7 +102,7 @@ module.exports = {
     {
       name: 'worker',
       script: 'apps/worker/dist/index.js',
-      cwd: '/opt/Bl-compiler',
+      cwd: '/opt/place value Portal',
       instances: 2,
       exec_mode: 'cluster',
       env: {
@@ -133,7 +133,7 @@ LimitNPROC=infinity
 LimitCORE=infinity
 Environment=PATH=/usr/bin:/usr/local/bin
 Environment=PM2_HOME=/home/ubuntu/.pm2
-ExecStart=/usr/local/bin/pm2-runtime start /opt/Bl-compiler/ecosystem.config.js
+ExecStart=/usr/local/bin/pm2-runtime start /opt/place value Portal/ecosystem.config.js
 ExecReload=/usr/local/bin/pm2 reload all
 ExecStop=/usr/local/bin/pm2 kill
 

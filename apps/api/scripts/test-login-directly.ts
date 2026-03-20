@@ -12,25 +12,25 @@ async function testLoginDirectly() {
     const email = 'admin@compiler.com';
     const password = 'Admin@123';
     
-    console.log('🔍 Testing login directly...\n');
+    console.log(' Testing login directly...\n');
     
     // Find user
     const user = await mongoose.connection.collection('users').findOne({ email });
     
     if (!user) {
-      console.log('❌ User not found');
+      console.log(' User not found');
       return;
     }
     
-    console.log('✅ User found');
-    console.log('📧 Email:', user.email);
-    console.log('🎭 Role:', user.role);
-    console.log('✅ isActive:', user.isActive);
-    console.log('✅ isEmailVerified:', user.isEmailVerified);
+    console.log(' User found');
+    console.log(' Email:', user.email);
+    console.log(' Role:', user.role);
+    console.log(' isActive:', user.isActive);
+    console.log(' isEmailVerified:', user.isEmailVerified);
     
     // Check password
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log('🔑 Password matches:', passwordMatch);
+    console.log(' Password matches:', passwordMatch);
     
     // Check for any fields that might cause issues
     const problematicFields = [
@@ -39,16 +39,16 @@ async function testLoginDirectly() {
       'suspended', 'banned', 'archived'
     ];
     
-    console.log('\n🔍 Checking for problematic fields:');
+    console.log('\n Checking for problematic fields:');
     problematicFields.forEach(field => {
       if (field in user) {
-        console.log(`   ⚠️ Found ${field}:`, user[field]);
+        console.log(`    Found ${field}:`, user[field]);
       }
     });
     
     // If all checks pass, login should work
     if (passwordMatch && user.isActive && user.isEmailVerified) {
-      console.log('\n✅✅✅ All checks pass! Login SHOULD work! ✅✅✅');
+      console.log('\n All checks pass! Login SHOULD work! ');
       console.log('The issue must be in the UserService.login method implementation.');
     }
     

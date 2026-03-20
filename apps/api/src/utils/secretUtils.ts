@@ -50,8 +50,8 @@ export class SecretUtils {
             const tokenConfig: TokenConfig = {
                 secret: config?.secret || this.DEFAULT_JWT_SECRET,
                 expiresIn: config?.expiresIn || this.DEFAULT_JWT_EXPIRES_IN,
-                issuer: config?.issuer || 'Bl-compiler-api',
-                audience: config?.audience || 'Bl-compiler-users'
+                issuer: config?.issuer || 'place value Portal-api',
+                audience: config?.audience || 'place value Portal-users'
             };
 
             const token = jwt.sign(payload, tokenConfig.secret, {
@@ -85,8 +85,8 @@ export class SecretUtils {
             const tokenConfig: TokenConfig = {
                 secret: config?.secret || this.DEFAULT_REFRESH_SECRET,
                 expiresIn: config?.expiresIn || this.DEFAULT_REFRESH_EXPIRES_IN,
-                issuer: config?.issuer || 'bl-compiler-api',
-                audience: config?.audience || 'bl-compiler-users'
+                issuer: config?.issuer || 'place value Portal-api',
+                audience: config?.audience || 'place value Portal-users'
             };
 
             const token = jwt.sign(payload, tokenConfig.secret, {
@@ -121,8 +121,8 @@ export class SecretUtils {
             const tokenConfig: TokenConfig = {
                 secret: config?.secret || this.DEFAULT_API_KEY_SECRET,
                 expiresIn: config?.expiresIn || this.DEFAULT_API_KEY_EXPIRES_IN,
-                issuer: config?.issuer || 'Bl-compiler-api',
-                audience: config?.audience || 'Bl-compiler-api-users'
+                issuer: config?.issuer || 'place value Portal-api',
+                audience: config?.audience || 'place value Portal-api-users'
             };
 
             const apiKey = jwt.sign(payload, tokenConfig.secret, {

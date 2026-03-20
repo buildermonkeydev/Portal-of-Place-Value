@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# PM2 + Nginx Deployment Script for Bl-compiler Compiler
+# PM2 + Nginx Deployment Script for place value Portal Compiler
 # Run this after pm2-nginx-setup.sh
 
 set -e
 
-echo "🚀 Deploying Bl-compiler Compiler with PM2 + Nginx..."
+echo "🚀 Deploying place value Portal Compiler with PM2 + Nginx..."
 
 # Navigate to application directory
 cd /opt/blcompiler
@@ -23,7 +23,7 @@ echo "⚙️ Creating environment configuration..."
 cat > .env << 'EOF'
 # Application
 NODE_ENV=production
-APP_NAME=Bl-compiler Compiler
+APP_NAME=place value Portal Compiler
 APP_VERSION=1.0.0
 APP_URL=https://yourdomain.com
 APP_PORT=3000
@@ -131,7 +131,7 @@ EOF
 echo "🔧 Creating PM2 systemd service..."
 sudo tee /etc/systemd/system/pm2-blcompiler.service > /dev/null << 'EOF'
 [Unit]
-Description=PM2 process manager for Bl-compiler Compiler
+Description=PM2 process manager for place value Portal Compiler
 Documentation=https://pm2.keymetrics.io/
 After=network.target mongodb.service redis.service
 

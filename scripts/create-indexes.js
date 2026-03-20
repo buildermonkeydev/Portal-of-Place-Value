@@ -17,7 +17,7 @@ async function createIndexes() {
         await client.connect();
         console.log(' Connected to MongoDB');
         
-        const db = client.db('Bl-compiler');
+        const db = client.db('place value Portal');
         
         // User collection indexes
         console.log('Creating User collection indexes...');

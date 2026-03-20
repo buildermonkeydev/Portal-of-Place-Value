@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# PM2 Monitoring and Maintenance Script for Bl-compiler Compiler
+# PM2 Monitoring and Maintenance Script for place value Portal Compiler
 
-echo "📊 Bl-compiler Compiler - System Status"
+echo "📊 place value Portal Compiler - System Status"
 echo "======================================"
 
 # Check PM2 status

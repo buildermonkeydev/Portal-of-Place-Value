@@ -64,7 +64,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd /opt/Bl-compiler
+          cd /opt/place value Portal
           git pull origin main
           pnpm install
           pnpm build

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# PM2 Update Script for Bl-compiler Compiler
+# PM2 Update Script for place value Portal Compiler
 # Run this to update your application
 
 set -e
 
-echo "🔄 Updating Bl-compiler Compiler..."
+echo "🔄 Updating place value Portal Compiler..."
 
 # Navigate to application directory
-cd /opt/Bl-compiler
+cd /opt/place value Portal
 
 # Pull latest changes
 echo "📥 Pulling latest changes..."

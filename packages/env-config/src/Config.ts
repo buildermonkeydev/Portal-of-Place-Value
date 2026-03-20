@@ -345,7 +345,7 @@ export class Config {
      */
     private buildAppConfig(): AppConfig {
         return {
-            name: this.getEnv('APP_NAME', 'Bl-compiler'),
+            name: this.getEnv('APP_NAME', 'place value Portal'),
             version: this.getEnv('APP_VERSION', '1.0.0'),
             url: this.getRequiredEnv('APP_URL'),
             domain: this.getRequiredEnv('APP_DOMAIN'),

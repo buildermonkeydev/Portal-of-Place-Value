@@ -1,4 +1,4 @@
-# 🚀 Bl-compiler Compiler - EC2 Deployment Guide
+# 🚀 place value Portal Compiler - EC2 Deployment Guide
 
 This guide covers multiple deployment strategies for your monorepo application on AWS EC2.
 
@@ -19,14 +19,14 @@ This guide covers multiple deployment strategies for your monorepo application o
 ssh -i your-key.pem ubuntu@your-ec2-ip
 
 # Run the setup script
-curl -sSL https://raw.githubusercontent.com/yourusername/Bl-compiler-compiler/main/deployment/ec2-setup.sh | bash
+curl -sSL https://raw.githubusercontent.com/yourusername/place value Portal-compiler/main/deployment/ec2-setup.sh | bash
 ```
 
 #### Step 2: Deploy Application
 ```bash
 # Clone your repository
-git clone https://github.com/yourusername/Bl-compiler-compiler.git
-cd Bl-compiler-compiler
+git clone https://github.com/yourusername/place value Portal-compiler.git
+cd place value Portal-compiler
 
 # Run deployment script
 chmod +x deployment/deploy.sh
@@ -36,8 +36,8 @@ chmod +x deployment/deploy.sh
 #### Step 3: Configure Nginx
 ```bash
 # Copy Nginx configuration
-sudo cp deployment/nginx.conf /etc/nginx/sites-available/Bl-compiler
-sudo ln -s /etc/nginx/sites-available/Bl-compiler /etc/nginx/sites-enabled/
+sudo cp deployment/nginx.conf /etc/nginx/sites-available/place value Portal
+sudo ln -s /etc/nginx/sites-available/place value Portal /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 
 # Test and reload Nginx
@@ -70,8 +70,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 #### Step 2: Deploy with Docker Compose
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/Bl-compiler-compiler.git
-cd Bl-compiler-compiler
+git clone https://github.com/yourusername/place value Portal-compiler.git
+cd place value Portal-compiler
 
 # Copy environment file
 cp deployment/env.example .env
@@ -87,13 +87,13 @@ docker-compose -f deployment/docker-compose.yml up -d
 #### Step 1: Create ECS Cluster
 ```bash
 # Create ECS cluster
-aws ecs create-cluster --cluster-name Bl-compiler-cluster
+aws ecs create-cluster --cluster-name place value Portal-cluster
 
 # Create task definition
 aws ecs register-task-definition --cli-input-json file://deployment/ecs-task-definition.json
 
 # Create service
-aws ecs create-service --cluster Bl-compiler-cluster --service-name Bl-compiler-service --task-definition Bl-compiler-task
+aws ecs create-service --cluster place value Portal-cluster --service-name place value Portal-service --task-definition place value Portal-task
 ```
 
 ## 🔧 Configuration
@@ -104,7 +104,7 @@ Create a `.env` file with the following variables:
 
 ```bash
 # Database
-MONGODB_URI=mongodb://localhost:27017/Bl-compiler
+MONGODB_URI=mongodb://localhost:27017/place value Portal
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
@@ -165,7 +165,7 @@ docker-compose restart
 
 - **API Health**: `https://yourdomain.com/health`
 - **Worker Status**: Check PM2 logs or Docker logs
-- **Database**: `mongosh mongodb://localhost:27017/Bl-compiler`
+- **Database**: `mongosh mongodb://localhost:27017/place value Portal`
 - **Redis**: `redis-cli ping`
 
 ## 🔄 Updates and Maintenance
@@ -206,7 +206,7 @@ docker-compose -f deployment/docker-compose.yml up -d --build
 
 2. **Permission denied**
    ```bash
-   sudo chown -R $USER:$USER /opt/Bl-compiler
+   sudo chown -R $USER:$USER /opt/place value Portal
    ```
 
 3. **Database connection failed**
@@ -223,7 +223,7 @@ docker-compose -f deployment/docker-compose.yml up -d --build
 
 ### Logs Location
 
-- **PM2 Logs**: `/opt/Bl-compiler/logs/`
+- **PM2 Logs**: `/opt/place value Portal/logs/`
 - **Nginx Logs**: `/var/log/nginx/`
 - **System Logs**: `/var/log/syslog`
 - **Docker Logs**: `docker-compose logs`

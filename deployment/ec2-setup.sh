@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Setting up Bl-compiler Compiler on EC2..."
+echo "🚀 Setting up place value Portal Compiler on EC2..."
 
 # Update system
 sudo apt update && sudo apt upgrade -y

@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🚀 Setting up BL Compiler with PM2 + Nginx..."
+echo "🚀 Setting up B with PM2 + Nginx..."
 
 # Update system
 sudo apt update && sudo apt upgrade -y

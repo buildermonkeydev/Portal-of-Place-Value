@@ -181,7 +181,7 @@ export class EmailService {
             await this.getQueueClient().addMailJob(
                 MailJobType.WELCOME,
                 to,
-                'Welcome to Bl-compiler Compiler!',
+                'Welcome to place value Portal Compiler!',
                 MAIL_TEMPLATES.WELCOME,
                 {
                     name,
@@ -524,7 +524,7 @@ export class EmailService {
     ): Promise<string> {
         try {
             const html = `
-                <h2>You're invited to join Bl-compiler Compiler!</h2>
+                <h2>You're invited to join place value Portal Compiler!</h2>
                 <p>Hello ${data.name},</p>
                 <p>${data.customMessage || 'You have been invited to join our platform.'}</p>
                 <p>Click the link below to register:</p>
@@ -533,7 +533,7 @@ export class EmailService {
 
             return await this.sendCustomEmail(
                 email,
-                'You\'re invited to join Bl-compiler Compiler!',
+                'You\'re invited to join place value Portal Compiler!',
                 html,
                 0,
                 {

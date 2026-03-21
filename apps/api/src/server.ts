@@ -41,14 +41,33 @@ export const createServer = (): Express => {
       .use(urlencoded({ extended: true, limit: '5mb' }))
       .use(json({ limit: '5mb' }))
       .use(cookieParser())
-      .use(cors({
-        origin: config.getApp().cors.origin,
-        credentials: config.getApp().cors.credentials,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-        exposedHeaders: ['Content-Length', 'X-Request-Id'],
-        optionsSuccessStatus: 200,
-      }));
+   // Replace your current CORS middleware with:
+.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://taskverse.placevalue.in',
+      'https://admin.placevalue.in',
+      'https://judge.placevalue.in'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, false);
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Length', 'X-Request-Id'],
+  optionsSuccessStatus: 200,
+}))
     logger.info('Middleware setup complete', 'Server');
 
     // app.get("/status", async (req, res) => {

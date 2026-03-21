@@ -33,7 +33,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { AssessmentFormData, User, College } from '../types';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { userAPI } from '@/lib/api/users';
 import { cn } from '@/lib/utils';
 
@@ -54,9 +54,15 @@ export function UserAssignmentForm({
     formState: { errors },
   } = form;
   const watchedAssignAllUsers = watch('assignAllUsers');
-  const assignedUsers = watch('assignedUsers') || [];
-  const invitedUsers = watch('invitedUsers') || [];
-  const selectedColleges = watch('colleges') || [];
+  const assignedUsersRaw = watch('assignedUsers') || [];
+  const invitedUsersRaw = watch('invitedUsers') || [];
+  const selectedCollegesRaw = watch('colleges') || [];
+  
+  // Memoize arrays to prevent recreation on every render
+  const assignedUsers = useMemo(() => assignedUsersRaw, [assignedUsersRaw]);
+  const invitedUsers = useMemo(() => invitedUsersRaw, [invitedUsersRaw]);
+  const selectedColleges = useMemo(() => selectedCollegesRaw, [selectedCollegesRaw]);
+  
   const [newInvitedEmail, setNewInvitedEmail] = useState('');
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
@@ -67,13 +73,15 @@ export function UserAssignmentForm({
   const [userDetailsMap, setUserDetailsMap] = useState<Map<string, User>>(new Map());
   const [expandedColleges, setExpandedColleges] = useState<Set<string>>(new Set());
 
+  // Memoize available users for search
+  const availableUsers = useMemo(() => {
+    return users.filter((user) => !assignedUsers.includes(user._id));
+  }, [users, assignedUsers]);
+
   // Debounced search function
   const handleSearchChange = useCallback(
     (query: string) => {
       if (!query.trim()) {
-        const availableUsers = users.filter(
-          (user) => !assignedUsers.includes(user._id)
-        );
         setSearchResults(availableUsers);
         return;
       }
@@ -83,13 +91,13 @@ export function UserAssignmentForm({
         userAPI
           .searchUsers({ search: query, limit: 50 })
           .then((response) => {
-            const availableUsers = (response.data || []).filter(
+            const availableUsersList = (response.data || []).filter(
               (user) => !assignedUsers.includes(user._id)
             );
-            setSearchResults(availableUsers);
+            setSearchResults(availableUsersList);
             setUserDetailsMap((prevMap) => {
               const newMap = new Map(prevMap);
-              availableUsers.forEach((user) => {
+              availableUsersList.forEach((user) => {
                 newMap.set(user._id, user);
               });
               return newMap;
@@ -106,15 +114,12 @@ export function UserAssignmentForm({
         setSearchResults([]);
       }
     },
-    [assignedUsers, users]
+    [assignedUsers, availableUsers]
   );
 
   // Load default users when component mounts
   useEffect(() => {
     if (users && !userSearchQuery.trim()) {
-      const availableUsers = users.filter(
-        (user) => !assignedUsers.includes(user._id)
-      );
       setSearchResults(availableUsers);
       setUserDetailsMap((prevMap) => {
         const newMap = new Map(prevMap);
@@ -124,7 +129,7 @@ export function UserAssignmentForm({
         return newMap;
       });
     }
-  }, [users, assignedUsers, userSearchQuery]);
+  }, [users, availableUsers, userSearchQuery]);
 
   useEffect(() => {
     return () => {
@@ -134,7 +139,7 @@ export function UserAssignmentForm({
     };
   }, [searchTimeout]);
 
-  const toggleCollegeExpand = (collegeId: string) => {
+  const toggleCollegeExpand = useCallback((collegeId: string) => {
     setExpandedColleges((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(collegeId)) {
@@ -144,9 +149,9 @@ export function UserAssignmentForm({
       }
       return newSet;
     });
-  };
+  }, []);
 
-  const addUser = (userId: string, userData?: User) => {
+  const addUser = useCallback((userId: string, userData?: User) => {
     setIsSelectingUser(true);
     if (!assignedUsers.includes(userId)) {
       setValue('assignedUsers', [...assignedUsers, userId]);
@@ -164,44 +169,44 @@ export function UserAssignmentForm({
     setTimeout(() => {
       setIsSelectingUser(false);
     }, 100);
-  };
+  }, [assignedUsers, setValue]);
 
-  const removeUser = (userId: string) => {
+  const removeUser = useCallback((userId: string) => {
     const newUsers = assignedUsers.filter((id) => id !== userId);
     setValue('assignedUsers', newUsers);
-  };
+  }, [assignedUsers, setValue]);
 
-  const handleAssignAllUsers = (checked: boolean) => {
+  const handleAssignAllUsers = useCallback((checked: boolean) => {
     setValue('assignAllUsers', checked);
     if (checked) {
       setValue('assignedUsers', []);
     }
-  };
+  }, [setValue]);
 
-  const addInvitedUser = () => {
+  const addInvitedUser = useCallback(() => {
     if (newInvitedEmail && !invitedUsers.includes(newInvitedEmail)) {
       setValue('invitedUsers', [...invitedUsers, newInvitedEmail]);
       setNewInvitedEmail('');
     }
-  };
+  }, [newInvitedEmail, invitedUsers, setValue]);
 
-  const removeInvitedUser = (email: string) => {
+  const removeInvitedUser = useCallback((email: string) => {
     const newEmails = invitedUsers.filter((e) => e !== email);
     setValue('invitedUsers', newEmails);
-  };
+  }, [invitedUsers, setValue]);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       addInvitedUser();
     }
-  };
+  }, [addInvitedUser]);
 
   // Helper function to check if college has branches or years selected
-  const hasSelectedFilters = (college: typeof selectedColleges[0]) => {
+  const hasSelectedFilters = useCallback((college: typeof selectedColleges[0]) => {
     return (college.branches && college.branches.length > 0) || 
            (college.year && college.year.length > 0);
-  };
+  }, []);
 
   return (
     <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
@@ -427,7 +432,7 @@ export function UserAssignmentForm({
                       </div>
                     </div>
 
-                    {/* Expand/Collapse Button for Details - Fixed null check */}
+                    {/* Expand/Collapse Button for Details */}
                     {isSelected && selectedCollege && hasSelectedFilters(selectedCollege) && (
                       <button
                         onClick={() => toggleCollegeExpand(college._id)}
@@ -447,7 +452,7 @@ export function UserAssignmentForm({
                       </button>
                     )}
 
-                    {/* Expanded Details - Fixed null checks */}
+                    {/* Expanded Details */}
                     {isExpanded && isSelected && selectedCollege && hasSelectedFilters(selectedCollege) && (
                       <div className="px-4 py-3 bg-white/5 border-t border-white/10">
                         <div className="space-y-2">

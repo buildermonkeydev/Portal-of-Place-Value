@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,19 +44,6 @@ interface SectionScore {
   questionsCount: number;
 }
 
-const IndividualAssessmentResultPage = () => {
-  const params = useParams();
-  const resultId = params.id as string;
-  const [result, setResult] = useState<AssessmentResultWithCollegeInfo | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSendingReport, setIsSendingReport] = useState(false);
-  const [email, setEmail] = useState('');
-  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-  const [isRecalculating, setIsRecalculating] = useState(false);
-  const [isRecalculateDialogOpen, setIsRecalculateDialogOpen] = useState(false);
-
 const LANGUAGE_MAP: Record<number, string> = {
   63: 'JavaScript (Node.js)',
   74: 'TypeScript',
@@ -73,11 +60,23 @@ const LANGUAGE_MAP: Record<number, string> = {
   70: 'Python 2',
 };
 
-  useEffect(() => {
-    fetchResult();
-  }, [resultId]);
+const IndividualAssessmentResultPage = () => {
+  const params = useParams();
+  const resultId = params.id as string;
+  const [result, setResult] = useState<AssessmentResultWithCollegeInfo | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSendingReport, setIsSendingReport] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [isRecalculating, setIsRecalculating] = useState(false);
+  const [isRecalculateDialogOpen, setIsRecalculateDialogOpen] = useState(false);
 
-  const fetchResult = async () => {
+  // Memoized fetch function to prevent recreation on every render
+  const fetchResult = useCallback(async () => {
+    if (!resultId) return;
+    
     try {
       setIsLoading(true);
       const response = await assessmentResultAPI.getDetailedResult(resultId);
@@ -89,10 +88,14 @@ const LANGUAGE_MAP: Record<number, string> = {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [resultId]);
 
-  // Get section-wise scores (use stored scores if available, otherwise calculate)
-  const getSectionScores = (): SectionScore[] => {
+  useEffect(() => {
+    fetchResult();
+  }, [fetchResult]);
+
+  // Memoized section scores calculation
+  const sectionScores = useMemo(() => {
     if (!result) return [];
 
     // If section scores are already stored in the result, use them
@@ -133,12 +136,10 @@ const LANGUAGE_MAP: Record<number, string> = {
     return Array.from(sectionMap.values()).sort((a, b) =>
       a.sectionName.localeCompare(b.sectionName)
     );
-  };
+  }, [result]);
 
-  const exportIndividualResult = () => {
+  const exportIndividualResult = useCallback(() => {
     if (!result) return;
-
-    const sectionScores = getSectionScores();
 
     const csvContent = [
       ['Assessment Result Report'],
@@ -222,9 +223,9 @@ const LANGUAGE_MAP: Record<number, string> = {
     a.click();
     window.URL.revokeObjectURL(url);
     toast.success('Individual result exported successfully');
-  };
+  }, [result, sectionScores]);
 
-  const sendReport = async () => {
+  const sendReport = useCallback(async () => {
     if (!email.trim()) {
       toast.error('Please enter an email address');
       return;
@@ -241,9 +242,9 @@ const LANGUAGE_MAP: Record<number, string> = {
     } finally {
       setIsSendingReport(false);
     }
-  };
+  }, [resultId, email]);
 
-  const handleRecalculate = async () => {
+  const handleRecalculate = useCallback(async () => {
     try {
       setIsRecalculating(true);
       setIsRecalculateDialogOpen(false);
@@ -259,7 +260,7 @@ const LANGUAGE_MAP: Record<number, string> = {
     } finally {
       setIsRecalculating(false);
     }
-  };
+  }, [resultId, fetchResult]);
 
   if (isLoading) {
     return (
@@ -554,7 +555,7 @@ const LANGUAGE_MAP: Record<number, string> = {
                 </tr>
               </thead>
               <tbody>
-                {getSectionScores().map((section, index) => (
+                {sectionScores.map((section, index) => (
                   <tr
                     key={section.sectionName}
                     className={index % 2 === 0 ? 'bg-gray-25' : 'bg-white'}
@@ -696,10 +697,6 @@ const LANGUAGE_MAP: Record<number, string> = {
                   </div>
 
                   <div className="flex items-center justify-between text-sm text-gray-500">
-                    {/* <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      Time spent: {response.timeSpent}s
-                    </div> */}
                     {question.explanation && (
                       <div className="text-blue-600">
                         <strong>Explanation:</strong> {question.explanation}
@@ -777,7 +774,7 @@ const LANGUAGE_MAP: Record<number, string> = {
 
                   <div className="mb-4">
                     <Label className="text-sm font-medium text-gray-500">
-                      User's Code
+                      User&apos;s Code
                     </Label>
                     <div className="mt-1 p-4 bg-gray-900 rounded-md overflow-x-auto">
                       <pre className="text-sm text-gray-100 font-mono whitespace-pre-wrap">

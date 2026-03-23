@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Setting up place value Portal Compiler on EC2..."
+echo " Setting up place value Portal Compiler on EC2..."
 
 # Update system
 sudo apt update && sudo apt upgrade -y
@@ -46,8 +46,8 @@ sudo usermod -aG docker $USER
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-echo "✅ System setup complete!"
-echo "📝 Next steps:"
+echo " System setup complete!"
+echo " Next steps:"
 echo "1. Clone your repository"
 echo "2. Run: ./deployment/deploy.sh"
 echo "3. Configure environment variables"

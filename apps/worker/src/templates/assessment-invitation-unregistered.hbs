@@ -12,355 +12,475 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.5;
+            color: #1f2937;
+            background: linear-gradient(135deg, #f0f9ff 0%, #eef2ff 100%);
+            padding: 32px 20px;
         }
         
         .container {
-            max-width: 600px;
+            max-width: 620px;
             margin: 0 auto;
             background-color: #ffffff;
-            border-radius: 12px;
+            border-radius: 32px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
         }
         
+        /* header with fresh gradient */
         .header {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(125deg, #059669 0%, #10b981 40%, #34d399 100%);
             color: white;
-            padding: 40px 30px;
+            padding: 44px 32px 40px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 280px;
+            height: 280px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            pointer-events: none;
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+            position: relative;
+            z-index: 1;
         }
         
         .header p {
             font-size: 16px;
-            opacity: 0.9;
+            opacity: 0.92;
+            position: relative;
+            z-index: 1;
         }
         
         .content {
-            padding: 40px 30px;
+            padding: 36px 36px 28px;
         }
         
         .greeting {
             font-size: 18px;
             font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 20px;
+            color: #111827;
+            margin-bottom: 16px;
         }
         
+        .intro-text {
+            color: #4b5563;
+            margin-bottom: 28px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        /* registration notice card */
         .registration-notice {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            border: 1px solid #93c5fd;
-            border-radius: 8px;
-            padding: 24px;
+            background: linear-gradient(115deg, #eff6ff 0%, #e0e7ff 100%);
+            border-radius: 24px;
+            padding: 28px 24px;
             margin: 24px 0;
             text-align: center;
+            border: 1px solid #c7d2fe;
         }
         
         .registration-notice h2 {
-            color: #1e40af;
+            color: #1e3a8a;
             font-size: 20px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .registration-notice p {
             color: #1e40af;
-            font-size: 16px;
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+        
+        /* urgency badge */
+        .urgency-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #b45309;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
             margin-bottom: 20px;
         }
         
+        /* assessment card */
         .assessment-card {
-            background-color: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            background: #ffffff;
+            border-radius: 24px;
             padding: 24px;
-            margin: 24px 0;
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
         
         .assessment-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            color: #1f2937;
+            color: #111827;
             margin-bottom: 12px;
-        }
-        
-        .assessment-details {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .detail-item {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        .detail-item strong {
-            color: #374151;
-            margin-right: 8px;
-            min-width: 80px;
+            letter-spacing: -0.2px;
         }
         
         .assessment-description {
-            color: #4b5563;
+            color: #6b7280;
+            font-size: 14px;
             line-height: 1.6;
             margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f2f5;
         }
         
-        .instruction {
-            background-color: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 16px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
         }
         
-        .instruction h3 {
-            color: #92400e;
-            font-size: 14px;
+        .detail-chip {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        
+        .detail-chip span:first-child {
             font-weight: 600;
-            margin-bottom: 8px;
+            color: #4b5563;
+            min-width: 60px;
         }
         
-        .instruction p {
+        .detail-chip span:last-child {
+            color: #111827;
+            font-weight: 500;
+        }
+        
+        /* instruction card */
+        .instruction-card {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin: 24px 0;
+        }
+        
+        .instruction-card h3 {
+            color: #b45309;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .instruction-card p {
             color: #92400e;
             font-size: 14px;
             margin: 0;
         }
         
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            text-decoration: none;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            text-align: center;
-            margin: 24px 0;
-            transition: transform 0.2s ease;
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .secondary-button {
-            display: inline-block;
-            background-color: #f3f4f6;
-            color: #374151;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 500;
-            font-size: 14px;
-            margin-left: 12px;
-            border: 1px solid #d1d5db;
-        }
-        
-        .steps {
-            background-color: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 8px;
+        /* steps section */
+        .steps-section {
+            background: #f0fdf9;
+            border-radius: 24px;
             padding: 24px;
-            margin: 24px 0;
+            margin: 28px 0;
+            border: 1px solid #ccf0e3;
         }
         
-        .steps h3 {
-            color: #0c4a6e;
+        .steps-section h3 {
             font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 20px;
             text-align: center;
         }
         
-        .step {
+        .step-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 16px;
-            padding: 12px;
-            background-color: white;
-            border-radius: 6px;
-            border: 1px solid #e0f2fe;
+            gap: 14px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid #d1fae5;
         }
         
         .step-number {
-            background-color: #0ea5e9;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(125deg, #059669, #10b981);
             color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+            border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 12px;
-            margin-right: 12px;
+            font-weight: 700;
+            font-size: 14px;
             flex-shrink: 0;
         }
         
         .step-content h4 {
-            color: #0c4a6e;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
+            color: #065f46;
             margin-bottom: 4px;
         }
         
         .step-content p {
-            color: #0369a1;
             font-size: 13px;
+            color: #4b5563;
             margin: 0;
         }
         
-        .footer {
-            background-color: #f9fafb;
-            padding: 30px;
+        /* benefits */
+        .benefits-card {
+            background: #ecfdf5;
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin: 24px 0;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .benefits-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #047857;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .benefits-card ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #065f46;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        
+        .benefits-card li {
+            margin: 6px 0;
+        }
+        
+        /* deadline warning */
+        .deadline-warning {
+            background: #fef2f2;
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin: 24px 0;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .deadline-warning h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #b91c1c;
+            margin-bottom: 8px;
+        }
+        
+        .deadline-warning p {
+            font-size: 13px;
+            color: #991b1b;
+            margin: 0;
+        }
+        
+        /* CTA buttons */
+        .cta-group {
             text-align: center;
-            border-top: 1px solid #e5e7eb;
+            margin: 32px 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(105deg, #059669, #10b981);
+            color: white;
+            text-decoration: none;
+            padding: 14px 36px;
+            border-radius: 48px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 6px 14px rgba(5, 150, 105, 0.25);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(5, 150, 105, 0.3);
+        }
+        
+        .btn-secondary {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #1f2937;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 48px;
+            font-weight: 500;
+            font-size: 15px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        /* tips section */
+        .tips-box {
+            background: #fafcff;
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-top: 28px;
+            border: 1px solid #eef2f8;
+        }
+        
+        .tips-box h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tips-box ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .tips-box li {
+            margin: 6px 0;
+        }
+        
+        /* footer */
+        .footer {
+            background: #f9fafb;
+            padding: 28px 32px 32px;
+            text-align: center;
+            border-top: 1px solid #eef2f8;
         }
         
         .footer p {
             color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 12px;
+            margin: 8px 0;
         }
         
         .footer a {
-            color: #10b981;
+            color: #059669;
             text-decoration: none;
+            font-weight: 500;
         }
         
         .footer a:hover {
             text-decoration: underline;
         }
         
-        .urgency-badge {
-            display: inline-block;
-            background-color: #fef3c7;
-            color: #92400e;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 16px;
+        .footer-links {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
         
-        .deadline-warning {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        
-        .deadline-warning h3 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .deadline-warning p {
-            font-size: 14px;
-            margin: 0;
-        }
-        
-        .benefits {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .benefits h3 {
-            color: #166534;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        
-        .benefits ul {
-            color: #15803d;
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 0;
-            padding-left: 20px;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
+        @media (max-width: 560px) {
+            body {
+                padding: 20px 12px;
             }
-            
-            .header, .content, .footer {
-                padding: 20px;
+            .content {
+                padding: 28px 24px;
             }
-            
-            .assessment-details {
+            .header {
+                padding: 32px 24px;
+            }
+            .details-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .cta-button, .secondary-button {
-                display: block;
-                margin: 12px 0;
-                text-align: center;
-            }
-            
-            .step {
+            .cta-group {
                 flex-direction: column;
+                gap: 12px;
+            }
+            .btn-primary, .btn-secondary {
                 text-align: center;
             }
-            
-            .step-number {
-                margin: 0 auto 8px auto;
+            .step-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- Header with invitation badge -->
         <div class="header">
             <h1>🎯 Assessment Invitation</h1>
-            <p>You've been invited to take an assessment</p>
+            <p>You've been specially invited to participate</p>
         </div>
         
-        <!-- Content -->
+        <!-- Main Content -->
         <div class="content">
             <div class="greeting">
-                Hello there,
+                Hello there, 👋
             </div>
             
-            <p>You have been invited to participate in an assessment. To take this assessment, you'll need to create an account first.</p>
+            <p class="intro-text">
+                You have been invited to participate in an assessment. To take this assessment, you'll need to create an account first — it's quick and free.
+            </p>
             
-            <!-- Registration Notice -->
+            <!-- Registration Required Banner -->
             <div class="registration-notice">
                 <h2>🔐 Registration Required</h2>
-                <p>You need to create an account to access this assessment. It only takes a few minutes!</p>
+                <p>Create your account in under 2 minutes to access and submit your assessment.</p>
             </div>
             
-            <!-- Urgency Badge -->
+            <!-- Urgency Badge (conditional) -->
             {{#if endDate}}
-            <div class="urgency-badge">
-                ⏰ Deadline: {{formatDate endDate}}
+            <div style="text-align: center;">
+                <div class="urgency-badge">
+                    ⏰ Deadline: {{endDateFormatted}}
+                </div>
             </div>
             {{/if}}
             
-            <!-- Assessment Card -->
+            <!-- Assessment Details Card -->
             <div class="assessment-card">
                 <div class="assessment-title">{{assessmentTitle}}</div>
                 
@@ -370,62 +490,54 @@
                 </div>
                 {{/if}}
                 
-                <div class="assessment-details">
-                    <div class="detail-item">
-                        <strong>Type:</strong>
+                <div class="details-grid">
+                    <div class="detail-chip">
+                        <span>📋 Type:</span>
                         <span>{{assessmentType}}</span>
                     </div>
-                    
-                    <div class="detail-item">
-                        <strong>Duration:</strong>
+                    <div class="detail-chip">
+                        <span>⏱️ Duration:</span>
                         <span>{{duration}} minutes</span>
                     </div>
-                    
                     {{#if totalMarks}}
-                    <div class="detail-item">
-                        <strong>Total Marks:</strong>
+                    <div class="detail-chip">
+                        <span>🏆 Total Marks:</span>
                         <span>{{totalMarks}}</span>
                     </div>
                     {{/if}}
-                    
                     {{#if totalQuestions}}
-                    <div class="detail-item">
-                        <strong>Questions:</strong>
+                    <div class="detail-chip">
+                        <span>📝 Questions:</span>
                         <span>{{totalQuestions}}</span>
                     </div>
                     {{/if}}
-                    
                     {{#if startDate}}
-                    <div class="detail-item">
-                        <strong>Start Date:</strong>
-                        <span>{{formatDate startDate}}</span>
+                    <div class="detail-chip">
+                        <span>📅 Starts:</span>
+                        <span>{{startDateFormatted}}</span>
                     </div>
                     {{/if}}
-                    
                     {{#if endDate}}
-                    <div class="detail-item">
-                        <strong>End Date:</strong>
-                        <span>{{formatDate endDate}}</span>
+                    <div class="detail-chip">
+                        <span>🔚 Ends:</span>
+                        <span>{{endDateFormatted}}</span>
                     </div>
                     {{/if}}
-                    
                     {{#if collegeName}}
-                    <div class="detail-item">
-                        <strong>College:</strong>
+                    <div class="detail-chip">
+                        <span>🏛️ College:</span>
                         <span>{{collegeName}}</span>
                     </div>
                     {{/if}}
-                    
                     {{#if courseName}}
-                    <div class="detail-item">
-                        <strong>Course:</strong>
+                    <div class="detail-chip">
+                        <span>📘 Course:</span>
                         <span>{{courseName}}</span>
                     </div>
                     {{/if}}
-                    
                     {{#if year}}
-                    <div class="detail-item">
-                        <strong>Year:</strong>
+                    <div class="detail-chip">
+                        <span>🎓 Year:</span>
                         <span>{{year}}</span>
                     </div>
                     {{/if}}
@@ -434,95 +546,96 @@
             
             <!-- Instructions -->
             {{#if instruction}}
-            <div class="instruction">
+            <div class="instruction-card">
                 <h3>📋 Important Instructions</h3>
                 <p>{{instruction}}</p>
             </div>
             {{/if}}
             
-            <!-- Steps to Get Started -->
-            <div class="steps">
+            <!-- How to Get Started Steps -->
+            <div class="steps-section">
                 <h3>🚀 How to Get Started</h3>
                 
-                <div class="step">
+                <div class="step-item">
                     <div class="step-number">1</div>
                     <div class="step-content">
                         <h4>Create Your Account</h4>
-                        <p>Click the "Register Now" button below to create your free account</p>
+                        <p>Click "Register Now" and fill in your details to create your free account</p>
                     </div>
                 </div>
                 
-                <div class="step">
+                <div class="step-item">
                     <div class="step-number">2</div>
                     <div class="step-content">
                         <h4>Verify Your Email</h4>
-                        <p>Check your email and click the verification link to activate your account</p>
+                        <p>Check your inbox and click the verification link to activate your account</p>
                     </div>
                 </div>
                 
-                <div class="step">
+                <div class="step-item">
                     <div class="step-number">3</div>
                     <div class="step-content">
                         <h4>Take the Assessment</h4>
-                        <p>Once verified, you can access and complete the assessment</p>
+                        <p>Once verified, log in and access your assessment instantly</p>
                     </div>
                 </div>
             </div>
             
-            <!-- Benefits -->
-            <div class="benefits">
+            <!-- Why Join Section -->
+            <div class="benefits-card">
                 <h3>✨ Why Join {{appName}}?</h3>
                 <ul>
-                    <li>Access to exclusive assessments and challenges</li>
-                    <li>Track your progress and performance</li>
-                    <li>Connect with peers and mentors</li>
-                    <li>Get personalized recommendations</li>
-                    <li>Build your professional portfolio</li>
+                    <li>Access to exclusive assessments and skill challenges</li>
+                    <li>Track your progress and performance analytics</li>
+                    <li>Connect with peers, mentors, and industry experts</li>
+                    <li>Get personalized recommendations and feedback</li>
+                    <li>Build your professional portfolio and credentials</li>
                 </ul>
             </div>
             
-            <!-- Deadline Warning -->
+            <!-- Deadline Warning (conditional) -->
             {{#if endDate}}
             <div class="deadline-warning">
-                <h3>⚠️ Important</h3>
-                <p>Please complete your registration and assessment before the deadline. Late submissions may not be accepted.</p>
+                <h3>⚠️ Don't miss the deadline</h3>
+                <p>Please complete your registration and submit the assessment before {{endDateFormatted}}. Late submissions may not be accepted.</p>
             </div>
             {{/if}}
             
-            <!-- Call to Action -->
-            <div style="text-align: center;">
-                <a href="{{registerUrl}}" class="cta-button">
+            <!-- Call to Action Buttons -->
+            <div class="cta-group">
+                <a href="{{registerUrl}}" class="btn-primary">
                     🚀 Register Now
                 </a>
-                <a href="{{appUrl}}" class="secondary-button">
+                <a href="{{appUrl}}" class="btn-secondary">
                     📖 Learn More
                 </a>
             </div>
             
-            <!-- Additional Information -->
-            <div style="margin-top: 32px; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
-                <h3 style="color: #374151; font-size: 16px; margin-bottom: 12px;">💡 Tips for Success</h3>
-                <ul style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0; padding-left: 20px;">
-                    <li>Use a valid email address for account verification</li>
-                    <li>Choose a strong password for account security</li>
-                    <li>Ensure you have a stable internet connection</li>
-                    <li>Find a quiet environment to take the assessment</li>
-                    <li>Read all instructions carefully before starting</li>
+            <!-- Tips for Success -->
+            <div class="tips-box">
+                <h3>💡 Tips for Success</h3>
+                <ul>
+                    <li>Use a valid email address — you'll receive important updates there</li>
+                    <li>Choose a strong password to keep your account secure</li>
+                    <li>Ensure you have a stable internet connection before starting</li>
+                    <li>Find a quiet, distraction-free environment for the assessment</li>
+                    <li>Read all instructions carefully before you begin</li>
                 </ul>
             </div>
         </div>
         
         <!-- Footer -->
         <div class="footer">
-            <p>If you have any questions or need assistance, please contact our support team.</p>
-            <p>
-                <a href="{{appUrl}}">Visit {{appName}}</a> | 
-                <a href="{{helpUrl}}">Help Center</a> | 
+            <p>Need assistance? Our support team is here to help.</p>
+            <div class="footer-links">
+                <a href="{{appUrl}}">Visit {{appName}}</a>
+                <a href="{{helpUrl}}">Help Center</a>
                 <a href="mailto:{{supportEmail}}">Contact Support</a>
+            </div>
+            <p style="font-size: 11px; margin-top: 16px;">
+                This is an automated invitation. Please do not reply to this email.
             </p>
-            <p style="font-size: 12px; color: #9ca3af; margin-top: 16px;">
-                This is an automated message. Please do not reply to this email.
-            </p>
+            <p style="font-size: 11px;">© 2024 {{appName}}. All rights reserved.</p>
         </div>
     </div>
 </body>

@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Deploying place value Portal Compiler..."
+echo " Deploying place value Portal ..."
 
 # Create application directory
 APP_DIR="/opt/place value Portal"
@@ -151,7 +151,7 @@ pm2 start ecosystem.config.js
 pm2 save
 pm2 startup
 
-echo "✅ Deployment complete!"
-echo "📝 Services started with PM2"
-echo "🌐 API available at: http://your-ec2-ip:3000"
-echo "📊 Monitor with: pm2 monit"
+echo " Deployment complete!"
+echo " Services started with PM2"
+echo " API available at: http://your-ec2-ip:3000"
+echo " Monitor with: pm2 monit"

@@ -5,139 +5,396 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Individual Assessment Report - {{report.assessment.title}}</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background-color: #f8fafc;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
             color: #0f172a;
+            line-height: 1.5;
         }
 
         .container {
-            max-width: 760px;
+            max-width: 720px;
             margin: 0 auto;
-            padding: 32px 16px 48px;
+            padding: 32px 20px 48px;
         }
 
+        /* main card with elevated design */
         .card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 30px 50px -20px rgba(15, 23, 42, 0.35);
-            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 28px;
+            padding: 36px 36px 40px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e9edf2;
         }
 
-        h1 {
-            margin: 0 0 12px;
+        /* header area */
+        .report-header {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .report-header h1 {
+            margin: 0 0 8px;
             font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #0f2b3d 0%, #1e4a6e 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        h2 {
-            font-size: 20px;
-            margin: 32px 0 12px;
+        .greeting-text {
+            font-size: 16px;
+            color: #334155;
+            margin: 8px 0 0;
         }
 
-        .grid {
+        /* metric grid - modern stats cards */
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 16px;
-            margin-top: 16px;
+            margin: 24px 0 20px;
         }
 
-        .metric {
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            border-radius: 16px;
-            padding: 16px;
-            background: #f8fafc;
+        .metric-card {
+            background: #fafcff;
+            border-radius: 20px;
+            padding: 18px 16px;
+            border: 1px solid #eef2f8;
+            transition: all 0.2s ease;
+            text-align: center;
         }
 
-        .metric span {
+        .metric-label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #64748b;
-            margin-bottom: 6px;
+            letter-spacing: 0.05em;
+            color: #5b6e8c;
+            margin-bottom: 8px;
         }
 
-        .metric strong {
-            font-size: 20px;
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
             color: #0f172a;
+            line-height: 1.2;
         }
 
-        .responses {
-            margin-top: 20px;
+        .metric-value small {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c7a91;
         }
 
-        .response {
-            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-            padding: 16px 0;
+        .status-badge {
+            display: inline-block;
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .response h4 {
+        /* section title */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 36px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f2b3d;
+        }
+
+        .section-title:before {
+            content: "📋";
+            font-size: 22px;
+        }
+
+        /* responses list - clean and structured */
+        .responses-list {
+            margin-top: 8px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .response-item {
+            border-bottom: 1px solid #edf2f7;
+            padding: 20px 0;
+            transition: background 0.1s ease;
+        }
+
+        .response-item:last-child {
+            border-bottom: none;
+        }
+
+        .response-question {
             margin: 0 0 8px;
             font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.4;
         }
 
-        .response small {
-            display: block;
-            color: #94a3b8;
+        .response-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #6c7a91;
+        }
+
+        .response-meta span {
+            background: #f8fafc;
+            padding: 3px 10px;
+            border-radius: 30px;
+        }
+
+        .answer-block {
+            margin-top: 12px;
+            background: #fafcff;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .answer-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #5b6e8c;
             margin-bottom: 6px;
         }
 
+        .user-answer {
+            font-size: 15px;
+            color: #1e293b;
+            font-weight: 500;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .correct-answer {
+            font-size: 14px;
+            color: #2b6e3c;
+            background: #ecfdf5;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .no-answer {
+            color: #d97706;
+            background: #fffbeb;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        /* footer */
         .footer {
+            margin-top: 36px;
+            padding-top: 24px;
             text-align: center;
-            margin-top: 32px;
-            color: #94a3b8;
-            font-size: 13px;
+            border-top: 1px solid #edf2f7;
+            font-size: 12px;
+            color: #7e8aa2;
+        }
+
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin: 6px 0;
+        }
+
+        .divider-light {
+            width: 48px;
+            height: 2px;
+            background: #e2e8f0;
+            margin: 14px auto;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 560px) {
+            .container {
+                padding: 20px 16px;
+            }
+            .card {
+                padding: 28px 24px;
+            }
+            .metric-value {
+                font-size: 24px;
+            }
+            .response-question {
+                font-size: 15px;
+            }
+            .metrics-grid {
+                gap: 12px;
+            }
+        }
+
+        /* performance-based status colors */
+        .status-pass {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .status-fail {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .status-pending {
+            background: #fef3c7;
+            color: #b45309;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>Individual Assessment Report</h1>
-            <p>Hi {{report.user.firstName}} {{report.user.lastName}}, here is your detailed assessment report.</p>
+            <!-- header with gradient accent -->
+            <div class="report-header">
+                <h1>Individual Assessment Report</h1>
+                <p class="greeting-text">
+                    Hi {{report.user.firstName}} {{report.user.lastName}},
+                    here is your detailed performance summary for <strong>{{report.assessment.title}}</strong>.
+                </p>
+            </div>
 
-            <div class="grid">
-                <div class="metric">
-                    <span>Assessment</span>
-                    <strong>{{report.assessment.title}}</strong>
+            <!-- metrics grid: dynamic score, percentage, status -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">🎯 Total Score</span>
+                    <div class="metric-value">{{report.result.totalMarksObtained}} <small>/ {{report.result.totalMarksPossible}}</small></div>
                 </div>
-                <div class="metric">
-                    <span>Score</span>
-                    <strong>{{report.result.totalMarksObtained}} / {{report.result.totalMarksPossible}}</strong>
+                <div class="metric-card">
+                    <span class="metric-label">📊 Percentage</span>
+                    <div class="metric-value">{{report.result.percentage}}<small>%</small></div>
                 </div>
-                <div class="metric">
-                    <span>Percentage</span>
-                    <strong>{{report.result.percentage}}%</strong>
-                </div>
-                <div class="metric">
-                    <span>Status</span>
-                    <strong>{{report.result.status}}</strong>
+                <div class="metric-card">
+                    <span class="metric-label">🏷️ Status</span>
+                    <div class="metric-value">
+                        <span class="status-badge {{#if (eq report.result.status 'Passed')}}status-pass{{else if (eq report.result.status 'Failed')}}status-fail{{else}}status-pending{{/if}}">
+                            {{report.result.status}}
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <h2>Responses</h2>
-            <div class="responses">
+            <!-- Responses section: clean and accessible -->
+            <div class="section-title">Responses & Feedback</div>
+            <div class="responses-list">
                 {{#each report.responses}}
-                <div class="response">
-                    <h4>{{#if question}}{{question.text}}{{else}}Question{{/if}}</h4>
-                    {{#if question}}
-                    <small>Section: {{question.section}} &nbsp;•&nbsp; Marks: {{question.marks}}</small>
-                    {{/if}}
-                    <p><strong>Your answer:</strong> {{#if selectedOptions.length}}{{selectedOptions}}{{else}}Not answered{{/if}}</p>
-                    {{#if question.correctAnswer.length}}
-                    <p><strong>Correct answer:</strong> {{question.correctAnswer}}</p>
-                    {{/if}}
+                <div class="response-item">
+                    <div class="response-question">
+                        {{#if question.text}}{{question.text}}{{else}}Question {{add @index 1}}{{/if}}
+                    </div>
+                    <div class="response-meta">
+                        {{#if question.section}}
+                        <span>📂 {{question.section}}</span>
+                        {{/if}}
+                        {{#if question.marks}}
+                        <span>⭐ {{question.marks}} marks</span>
+                        {{/if}}
+                        {{#if question.type}}
+                        <span>🔤 {{question.type}}</span>
+                        {{/if}}
+                    </div>
+                    
+                    <div class="answer-block">
+                        <div class="answer-label">✍️ Your answer</div>
+                        <div class="user-answer">
+                            {{#if selectedOptions.length}}
+                                {{#if (isArray selectedOptions)}}
+                                    {{#each selectedOptions}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+                                {{else}}
+                                    {{selectedOptions}}
+                                {{/if}}
+                            {{else}}
+                                {{#if userAnswer}}{{userAnswer}}{{else}}<span class="no-answer">⚠️ Not answered</span>{{/if}}
+                            {{/if}}
+                        </div>
+                        
+                        {{#if question.correctAnswer}}
+                            {{#if question.correctAnswer.length}}
+                            <div class="correct-answer">
+                                <strong>✓ Correct answer:</strong> 
+                                {{#if (isArray question.correctAnswer)}}
+                                    {{#each question.correctAnswer}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+                                {{else}}
+                                    {{question.correctAnswer}}
+                                {{/if}}
+                            </div>
+                            {{/if}}
+                        {{/if}}
+                        
+                        {{#if feedback}}
+                        <div style="margin-top: 12px; font-size: 13px; color: #4b6a9b; background: #f1f5f9; padding: 8px 12px; border-radius: 12px;">
+                            💡 {{feedback}}
+                        </div>
+                        {{/if}}
+                    </div>
                 </div>
                 {{/each}}
+                
+                <!-- fallback if no responses -->
+                {{#unless report.responses.length}}
+                <div style="text-align: center; padding: 48px 20px; background: #fafcff; border-radius: 24px;">
+                    <span style="font-size: 42px;">📭</span>
+                    <p style="margin-top: 12px; color: #5b6e8c;">No response data available for this assessment.</p>
+                </div>
+                {{/unless}}
             </div>
 
+            <!-- optional summary insight -->
+            {{#if report.result.percentage}}
+            <div style="margin-top: 32px; padding: 16px 20px; background: linear-gradient(115deg, #f8fafc 0%, #ffffff 100%); border-radius: 20px; border: 1px solid #eef2f8;">
+                <p style="font-size: 14px; color: #2c3e66; display: flex; align-items: center; gap: 8px;">
+                    <span>📈</span> 
+                    {{#if (gt report.result.percentage 75)}}
+                    Excellent work! Your performance shows strong understanding.
+                    {{else if (gt report.result.percentage 50)}}
+                    Good effort! Review the correct answers to strengthen your knowledge.
+                    {{else}}
+                    Keep practicing — review the feedback above and try again to improve.
+                    {{/if}}
+                </p>
+            </div>
+            {{/if}}
+
+            <!-- footer with support links -->
             <div class="footer">
-                Sent by {{appName}} • Need help? Visit <a href="{{helpUrl}}">{{helpUrl}}</a>
+                <p>Sent by <strong>{{appName}}</strong> — Assessment Report</p>
+                <div class="divider-light"></div>
+                <p>Need help? Visit our <a href="{{helpUrl}}">Help Center</a> or contact support at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+                <p style="margin-top: 12px; font-size: 11px;">This is an automated report. Please do not reply directly to this email.</p>
             </div>
         </div>
     </div>
+
+    <!-- Handlebars-like helper simulation: eq, gt, isArray helpers are defined here for rendering context.
+         In a real email system, these helpers will be processed server-side. The template includes conditional logic placeholders. -->
 </body>
 </html>
-

@@ -183,7 +183,7 @@ export class UserService {
             lastName: normalizedLastName,
             registrationNo: finalRegistrationNo,
             password: userData.password,
-            isEmailVerified: true,
+            isEmailVerified: false,
             role: userData.role || UserRole.STUDENT,
         });
 
@@ -259,10 +259,10 @@ console.log("Has branch field:", user && 'branch' in user);
         }
 
         // Verify password
-        console.log("Input password:", loginData.password);
-        console.log("Stored hash:", userDoc.password);
-        console.log("Password length:", loginData.password.length);
-        console.log("Hash length:", userDoc.password.length);
+        // console.log("Input password:", loginData.password);
+        // console.log("Stored hash:", userDoc.password);
+        // console.log("Password length:", loginData.password.length);
+        // console.log("Hash length:", userDoc.password.length);
 
         const isPasswordValid = await SecretUtils.comparePassword(loginData.password, userDoc.password);
         console.log("isPasswordValid", isPasswordValid)
@@ -298,50 +298,84 @@ console.log("Has branch field:", user && 'branch' in user);
         return { user: userDoc, accessToken, refreshToken };
     });
 
-    /**
-     * Verify email
-     */
     verifyEmail = withErrorHandling(async (token: string): Promise<{ user: IUserDocument; message: string }> => {
-        // Verify token
-        const decoded = SecretUtils.verifyToken(token) as any;
-
-        if (decoded.type !== 'email_verification') {
-            throwValidationError('Invalid verification token');
-        }
-
-        // Find user
-        const user = await this.userRepository.findById(decoded.userId);
-        if (!user) {
-            throwUserNotFoundError(decoded.userId);
-        }
-
-        // At this point, user is guaranteed to be non-null due to the throw above
-        const userDoc = user!;
-
-        // Check if already verified
-        if (userDoc.isEmailVerified) {
-            return { user: userDoc, message: 'Email already verified' };
-        }
-
-        // Update user
-        const updatedUser = await this.userRepository.update(userDoc._id + "", {
-            isEmailVerified: true,
-            emailVerifiedAt: new Date(),
-        });
-
-        if (!updatedUser) {
-            throwDatabaseError('Failed to update user email verification status');
-        }
-
-        // Queue welcome email
-        await this.getEmailService().sendWelcomeEmail(
+    // Verify token
+    const decoded = SecretUtils.verifyToken(token) as any;
+    console.log("Verify mail is called 1")
+    
+    if (decoded.type !== 'email_verification') {
+        throwValidationError('Invalid verification token');
+    }
+    console.log("Verify mail is called 2")
+    
+    // Find user
+    const user = await this.userRepository.findById(decoded.userId);
+    console.log("Verify mail is called 3")
+    
+    if (!user) {
+        throwUserNotFoundError(decoded.userId);
+    }
+    console.log("Verify mail is called 4")
+    
+    const userDoc = user!;
+    console.log("Verify mail is called 5")
+    console.log("User object structure:", Object.keys(userDoc))
+    console.log("isEmailVerified value:", userDoc.isEmailVerified)
+    console.log("isEmailVerified type:", typeof userDoc.isEmailVerified)
+    
+    // Check if already verified with safe access
+    let isVerified = false;
+    try {
+        isVerified = userDoc.isEmailVerified === true;
+        console.log("isVerified after safe check:", isVerified)
+    } catch (err) {
+        console.error("Error accessing isEmailVerified:", err)
+        throw new Error(`User document missing isEmailVerified field: ${err}`);
+    }
+    
+    if (isVerified) {
+        console.log("User is already verified, returning early")
+        return { user: userDoc, message: 'Email already verified' };
+    }
+    
+    console.log("Verify mail is called 6 - User not verified, proceeding...")
+    
+    // Update user
+    const updatedUser = await this.userRepository.update(userDoc._id + "", {
+        isEmailVerified: true,
+        emailVerifiedAt: new Date(),
+    });
+    console.log("Verify mail is called 7")
+    
+    if (!updatedUser) {
+        throwDatabaseError('Failed to update user email verification status');
+    }
+    console.log("Verify mail is called 8")
+    
+    // Queue welcome email
+    try {
+        console.log("Getting email service...");
+        const emailService = this.getEmailService();
+        console.log("Email service obtained:", !!emailService);
+        
+        console.log("About to send welcome email to:", userDoc.email);
+        await emailService.sendWelcomeEmail(
             userDoc.email,
             userDoc.firstName + " " + userDoc.lastName
         );
+        console.log("Welcome mail is called - SUCCESS");
+        logger.info(`Welcome email sent successfully to: ${userDoc.email}`);
+    } catch (emailError) {
+        console.error("ERROR in welcome email:", emailError);
+        logger.error(`Failed to send welcome email to ${userDoc.email}:`, {
+            error: emailError instanceof Error ? emailError.message : String(emailError),
+            stack: emailError instanceof Error ? emailError.stack : undefined
+        });
+    }
 
-        logger.info(`Email verified successfully: ${userDoc.email}`);
-        return { user: updatedUser!, message: 'Email verified successfully' };
-    });
+    logger.info(`Email verified successfully: ${userDoc.email}`);
+    return { user: updatedUser!, message: 'Email verified successfully' };
+});
 
     /**
      * Forgot password

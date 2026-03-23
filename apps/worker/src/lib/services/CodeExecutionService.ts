@@ -8,14 +8,7 @@ import {
 } from '../interfaces/CodeExecution';
 import Config from '@repo/env-config';
 
-// # Test API connectivity
-// curl https://judge.blcompiler.com/health
 
-// # Get all available languages
-// curl https://judge.blcompiler.com/languages
-
-// # Test Python execution
-// curl -X POST "https://judge.blcompiler.com/submissions?base64_encoded=false&wait=true" \
 //   -H "Content-Type: application/json" \
 //   -d '{"language_id": 71, "source_code": "print(\"Hello World!\")", "stdin": ""}'
 

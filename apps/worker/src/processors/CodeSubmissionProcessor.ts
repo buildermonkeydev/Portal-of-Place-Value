@@ -13,7 +13,7 @@ export class CodeSubmissionProcessor {
     public async processJob(job: Job<CodeSubmissionJobData>): Promise<any> {
         const startTime = Date.now();
         logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        logger.info('📥 [CodeSubmissionWorker] RECEIVED CODE SUBMISSION JOB');
+        logger.info(' [CodeSubmissionWorker] RECEIVED CODE SUBMISSION JOB');
         logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         logger.info(`Job ID: ${job.id}`);
         logger.info(`Submission ID: ${job.data.submissionId}`);
@@ -24,7 +24,7 @@ export class CodeSubmissionProcessor {
         logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
         try {
-            logger.info('🔄 [CodeSubmissionWorker] Starting code execution...');
+            logger.info(' [CodeSubmissionWorker] Starting code execution...');
 
             const { testId, userId, sourceCode, languageId, submissionId, testData } = job.data;
 
@@ -41,7 +41,7 @@ export class CodeSubmissionProcessor {
             const executionTime = Date.now() - startTime;
 
             logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            logger.info('✅ [CodeSubmissionWorker] JOB COMPLETED SUCCESSFULLY');
+            logger.info(' [CodeSubmissionWorker] JOB COMPLETED SUCCESSFULLY');
             logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             logger.info(`Job ID: ${job.id}`);
             logger.info(`Submission ID: ${submissionId}`);
@@ -59,7 +59,7 @@ export class CodeSubmissionProcessor {
             const executionTime = Date.now() - startTime;
 
             logger.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            logger.error('❌ [CodeSubmissionWorker] JOB FAILED');
+            logger.error(' [CodeSubmissionWorker] JOB FAILED');
             logger.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             logger.error(`Job ID: ${job.id}`);
             logger.error(`Submission ID: ${job.data.submissionId}`);

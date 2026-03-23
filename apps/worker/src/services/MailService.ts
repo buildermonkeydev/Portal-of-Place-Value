@@ -206,7 +206,7 @@ export class MailService {
         await this.sendEmail({
             type: MailJobType.WELCOME,
             to,
-            subject: 'Welcome to place value Portal Compiler!',
+            subject: 'Welcome to place value Portal !',
             template: MAIL_TEMPLATES.WELCOME,
             data: {
                 name,

@@ -11,7 +11,7 @@ const { performance } = require('perf_hooks');
 
 // Configuration
 const CONFIG = {
-    API_BASE_URL: 'https://backend.blcompiler.com',
+    API_BASE_URL: 'https://admin.placevalue.in',
     TARGET_CONCURRENT_USERS: 500, // Back to 500 users with 30GB RAM optimizations
     TEST_DURATION_SECONDS: 60,
     RAMP_UP_SECONDS: 10,
@@ -195,13 +195,13 @@ async function simulateUser(userId, stats, isRunning) {
             
             // Log registration results
             if (result.statusCode === 201) {
-                console.log(`✅ User ${userId} registration #${requestCount + 1} successful (${userData.email})`);
+                console.log(` User ${userId} registration #${requestCount + 1} successful (${userData.email})`);
             } else if (result.statusCode === 400) {
-                console.log(`❌ User ${userId} registration #${requestCount + 1} failed - validation error (${userData.email})`);
+                console.log(` User ${userId} registration #${requestCount + 1} failed - validation error (${userData.email})`);
             } else if (result.statusCode === 409) {
-                console.log(`⚠️  User ${userId} registration #${requestCount + 1} failed - user already exists (${userData.email})`);
+                console.log(`  User ${userId} registration #${requestCount + 1} failed - user already exists (${userData.email})`);
             } else {
-                console.log(`❌ User ${userId} registration #${requestCount + 1} failed - status ${result.statusCode} (${userData.email})`);
+                console.log(` User ${userId} registration #${requestCount + 1} failed - status ${result.statusCode} (${userData.email})`);
             }
             
             stats.recordRequest(result.responseTime, result.statusCode);
@@ -219,12 +219,12 @@ async function simulateUser(userId, stats, isRunning) {
 
 // Main load test function
 async function runLoadTest() {
-    console.log('🚀 Starting Registration Load Test for 500 Concurrent Users');
-    console.log(`📊 Target: ${CONFIG.TARGET_CONCURRENT_USERS} concurrent users for ${CONFIG.TEST_DURATION_SECONDS} seconds`);
-    console.log(`🌐 API: ${CONFIG.API_BASE_URL}`);
-    console.log('📝 Testing: Registration endpoint only');
-    console.log('📧 Real emails: aakashdev24@gmail.com, yfilmyzillla@gmail.com, akashuiuxd@gmail.com, aakash858400@gmail.com, easyhaiakash@gmail.com');
-    console.log('📧 Dummy emails: loadtest*@loadtest.com (for remaining users)');
+    console.log(' Starting Registration Load Test for 500 Concurrent Users');
+    console.log(`Target: ${CONFIG.TARGET_CONCURRENT_USERS} concurrent users for ${CONFIG.TEST_DURATION_SECONDS} seconds`);
+    console.log(` API: ${CONFIG.API_BASE_URL}`);
+    console.log(' Testing: Registration endpoint only');
+    console.log(' Real emails: aakashdev24@gmail.com, yfilmyzillla@gmail.com, akashuiuxd@gmail.com, aakash858400@gmail.com, easyhaiakash@gmail.com');
+    console.log(' Dummy emails: loadtest*@loadtest.com (for remaining users)');
     console.log('');
     
     const stats = new LoadTestStats();
@@ -234,7 +234,7 @@ async function runLoadTest() {
     stats.startTime = performance.now();
     
     // Ramp up users gradually
-    console.log('📈 Ramping up users...');
+    console.log(' Ramping up users...');
     for (let i = 0; i < CONFIG.TARGET_CONCURRENT_USERS; i++) {
         users.push(simulateUser(i, stats, isRunning));
         stats.concurrentUsers = i + 1;
@@ -251,13 +251,13 @@ async function runLoadTest() {
         }
     }
     
-    console.log(`✅ All ${CONFIG.TARGET_CONCURRENT_USERS} users started`);
-    console.log('⏱️  Running load test...');
+    console.log(` All ${CONFIG.TARGET_CONCURRENT_USERS} users started`);
+    console.log('  Running load test...');
     
     // Progress reporting
     const progressInterval = setInterval(() => {
         const currentStats = stats.getStats();
-        console.log(`📊 Progress: ${currentStats.totalRequests} requests, ${currentStats.successfulRequests} successful, ${currentStats.failedRequests} failed`);
+        console.log(`Progress: ${currentStats.totalRequests} requests, ${currentStats.successfulRequests} successful, ${currentStats.failedRequests} failed`);
     }, 10000);
     
     // Run test for specified duration
@@ -276,11 +276,11 @@ async function runLoadTest() {
     const finalStats = stats.getStats();
     
     console.log('\n' + '='.repeat(60));
-    console.log('📊 LOAD TEST RESULTS');
+    console.log(' LOAD TEST RESULTS');
     console.log('='.repeat(60));
     console.log('');
     
-    console.log('📈 PERFORMANCE:');
+    console.log(' PERFORMANCE:');
     console.log(`   Total Requests: ${finalStats.totalRequests}`);
     console.log(`   Successful: ${finalStats.successfulRequests}`);
     console.log(`   Failed: ${finalStats.failedRequests}`);
@@ -289,20 +289,20 @@ async function runLoadTest() {
     console.log(`   Concurrent Users: ${finalStats.concurrentUsers}`);
     console.log('');
     
-    console.log('⏱️  RESPONSE TIMES:');
+    console.log('  RESPONSE TIMES:');
     console.log(`   Average: ${finalStats.averageResponseTime}ms`);
     console.log(`   95th Percentile: ${finalStats.p95ResponseTime}ms`);
     console.log(`   99th Percentile: ${finalStats.p99ResponseTime}ms`);
     console.log('');
     
-    console.log('📊 STATUS CODES:');
+    console.log('STATUS CODES:');
     Object.entries(finalStats.statusCodes).forEach(([code, count]) => {
         console.log(`   ${code}: ${count}`);
     });
     console.log('');
     
     if (Object.keys(finalStats.errors).length > 0) {
-        console.log('❌ ERRORS:');
+        console.log(' ERRORS:');
         Object.entries(finalStats.errors).forEach(([error, count]) => {
             console.log(`   ${error}: ${count}`);
         });
@@ -310,33 +310,33 @@ async function runLoadTest() {
     }
     
     // Performance assessment
-    console.log('🎯 PERFORMANCE ASSESSMENT:');
+    console.log(' PERFORMANCE ASSESSMENT:');
     if (finalStats.successRate >= 99) {
-        console.log('   ✅ Excellent: Success rate >= 99%');
+        console.log('   Excellent: Success rate >= 99%');
     } else if (finalStats.successRate >= 95) {
-        console.log('   ⚠️  Good: Success rate >= 95%');
+        console.log('    Good: Success rate >= 95%');
     } else {
-        console.log('   ❌ Poor: Success rate < 95%');
+        console.log('   Poor: Success rate < 95%');
     }
     
     if (finalStats.averageResponseTime <= 500) {
-        console.log('   ✅ Excellent: Average response time <= 500ms');
+        console.log('    Excellent: Average response time <= 500ms');
     } else if (finalStats.averageResponseTime <= 1000) {
-        console.log('   ⚠️  Good: Average response time <= 1000ms');
+        console.log('     Good: Average response time <= 1000ms');
     } else {
-        console.log('   ❌ Poor: Average response time > 1000ms');
+        console.log('    Poor: Average response time > 1000ms');
     }
     
     if (finalStats.p95ResponseTime <= 1000) {
-        console.log('   ✅ Excellent: 95th percentile <= 1000ms');
+        console.log('    Excellent: 95th percentile <= 1000ms');
     } else if (finalStats.p95ResponseTime <= 2000) {
-        console.log('   ⚠️  Good: 95th percentile <= 2000ms');
+        console.log('    Good: 95th percentile <= 2000ms');
     } else {
-        console.log('   ❌ Poor: 95th percentile > 2000ms');
+        console.log('    Poor: 95th percentile > 2000ms');
     }
     
     console.log('');
-    console.log('✅ Load test completed!');
+    console.log('Load test completed!');
     console.log('='.repeat(60));
     
     // Return success/failure based on performance
@@ -350,7 +350,7 @@ if (require.main === module) {
             process.exit(success ? 0 : 1);
         })
         .catch(error => {
-            console.error('❌ Load test failed:', error);
+            console.error(' Load test failed:', error);
             process.exit(1);
         });
 }

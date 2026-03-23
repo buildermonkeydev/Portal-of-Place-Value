@@ -276,19 +276,19 @@ export class WorkerApp {
 
         worker.on('active', (job) => {
             logger.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-            logger.info(`▶️  ${workerName} job ACTIVE: ${job.id}`);
+            logger.info(`  ${workerName} job ACTIVE: ${job.id}`);
             logger.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
         });
 
         worker.on('completed', (job) => {
             logger.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-            logger.info(`✅ ${workerName} job COMPLETED: ${job.id}`);
+            logger.info(` ${workerName} job COMPLETED: ${job.id}`);
             logger.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
         });
 
         worker.on('failed', (job, err) => {
             logger.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-            logger.error(`❌ ${workerName} job FAILED: ${job?.id}`);
+            logger.error(` ${workerName} job FAILED: ${job?.id}`);
             logger.error(`Error: ${err.message}`);
             logger.error(`Stack: ${err.stack}`);
             logger.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
@@ -296,13 +296,13 @@ export class WorkerApp {
 
         worker.on('stalled', (jobId) => {
             logger.warn(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-            logger.warn(`⚠️  ${workerName} job STALLED: ${jobId}`);
+            logger.warn(`  ${workerName} job STALLED: ${jobId}`);
             logger.warn(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
         });
 
         worker.on('error', (err) => {
             logger.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-            logger.error(`🔥 ${workerName} ERROR: ${err.message}`);
+            logger.error(` ${workerName} ERROR: ${err.message}`);
             logger.error(`Stack: ${err.stack}`);
             logger.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
         });

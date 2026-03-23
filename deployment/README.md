@@ -1,15 +1,15 @@
-# 🚀 place value Portal Compiler - EC2 Deployment Guide
+#  place value Portal  - EC2 Deployment Guide
 
 This guide covers multiple deployment strategies for your monorepo application on AWS EC2.
 
-## 📋 Prerequisites
+## Prerequisites
 
 - AWS EC2 instance (t3.medium or larger recommended)
 - Ubuntu 20.04+ or Amazon Linux 2
 - Domain name (optional, for production)
 - SSL certificate (for HTTPS)
 
-## 🎯 Deployment Options
+##  Deployment Options
 
 ### Option 1: Simple PM2 Deployment (Recommended for beginners)
 
@@ -19,14 +19,14 @@ This guide covers multiple deployment strategies for your monorepo application o
 ssh -i your-key.pem ubuntu@your-ec2-ip
 
 # Run the setup script
-curl -sSL https://raw.githubusercontent.com/yourusername/place value Portal-compiler/main/deployment/ec2-setup.sh | bash
+curl -sSL https://raw.githubusercontent.com/yourusername/place value Portal/main/deployment/ec2-setup.sh | bash
 ```
 
 #### Step 2: Deploy Application
 ```bash
 # Clone your repository
-git clone https://github.com/yourusername/place value Portal-compiler.git
-cd place value Portal-compiler
+git clone https://github.com/yourusername/place value Portal.git
+cd place value Portal
 
 # Run deployment script
 chmod +x deployment/deploy.sh
@@ -70,8 +70,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 #### Step 2: Deploy with Docker Compose
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/place value Portal-compiler.git
-cd place value Portal-compiler
+git clone https://github.com/yourusername/place value Portal.git
+cd place value Portal
 
 # Copy environment file
 cp deployment/env.example .env
@@ -96,7 +96,7 @@ aws ecs register-task-definition --cli-input-json file://deployment/ecs-task-def
 aws ecs create-service --cluster place value Portal-cluster --service-name place value Portal-service --task-definition place value Portal-task
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -104,7 +104,7 @@ Create a `.env` file with the following variables:
 
 ```bash
 # Database
-MONGODB_URI=mongodb://localhost:27017/place value Portal
+MONGODB_URI=mongodb://localhost:27017/place-Portal
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
@@ -132,7 +132,7 @@ Configure your EC2 security groups:
 - **Port 27017**: MongoDB (if external access needed)
 - **Port 6379**: Redis (if external access needed)
 
-## 📊 Monitoring
+##  Monitoring
 
 ### PM2 Monitoring
 ```bash
@@ -168,7 +168,7 @@ docker-compose restart
 - **Database**: `mongosh mongodb://localhost:27017/place value Portal`
 - **Redis**: `redis-cli ping`
 
-## 🔄 Updates and Maintenance
+##  Updates and Maintenance
 
 ### PM2 Deployment
 ```bash
@@ -194,7 +194,7 @@ git pull origin main
 docker-compose -f deployment/docker-compose.yml up -d --build
 ```
 
-## 🚨 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -228,7 +228,7 @@ docker-compose -f deployment/docker-compose.yml up -d --build
 - **System Logs**: `/var/log/syslog`
 - **Docker Logs**: `docker-compose logs`
 
-## 📈 Performance Optimization
+##  Performance Optimization
 
 ### PM2 Optimization
 ```bash
@@ -250,7 +250,7 @@ pm2 scale worker 2
 - Configure Redis memory limits
 - Setup database monitoring
 
-## 🔒 Security Best Practices
+##  Security Best Practices
 
 1. **Use HTTPS** with valid SSL certificates
 2. **Configure firewall** to restrict access
@@ -260,7 +260,7 @@ pm2 scale worker 2
 6. **Backup data** regularly
 7. **Use environment variables** for secrets
 
-## 📞 Support
+##  Support
 
 For deployment issues:
 1. Check logs first
@@ -269,9 +269,5 @@ For deployment issues:
 4. Check network connectivity
 5. Review security group settings
 
-## 🎉 Success!
+##  Success!
 
-Once deployed, your application will be available at:
-- **API**: `https://yourdomain.com/api`
-- **Health Check**: `https://yourdomain.com/health`
-- **Monitoring**: `https://yourdomain.com:3001` (if using Grafana)

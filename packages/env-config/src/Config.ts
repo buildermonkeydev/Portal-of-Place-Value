@@ -282,7 +282,7 @@ export class Config {
      * Load environment variables
      */
     private loadEnvironment(configPath?: string): void {
-        // Get the root directory of the compiler project
+        // Get the root directory of the  project
         const rootDir = resolve(__dirname, '../../../');
 
         console.log("ROOT_DIR", rootDir);
@@ -354,7 +354,7 @@ export class Config {
             port: this.getNumberEnv('PORT', 3000),
             host: this.getEnv('HOST', 'localhost'),
             cors: {
-                origin: this.getArrayEnv('CORS_ORIGIN', ['http://localhost:3000', "https://www.assessments.blcompiler.com", 'www.assessments.blcompiler.com', 'https://assessments.blcompiler.com,assessments.blcompiler.com']),
+                origin: this.getArrayEnv('CORS_ORIGIN', ['http://localhost:3000', ]),
                 credentials: this.getBooleanEnv('CORS_CREDENTIALS', true),
             },
         };

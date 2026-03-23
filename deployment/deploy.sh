@@ -14,7 +14,7 @@ sudo chown $USER:$USER $APP_DIR
 
 # Clone repository (replace with your actual repo)
 cd $APP_DIR
-git clone https://github.com/yourusername/place value Portal-compiler.git .
+git clone https://github.com/yourusername/place value Portal.git .
 
 # Install dependencies
 pnpm install
@@ -26,7 +26,7 @@ pnpm build
 cat > .env << EOF
 # Application
 NODE_ENV=production
-APP_NAME=place value Portal Compiler
+APP_NAME=place value Portal 
 APP_VERSION=1.0.0
 APP_URL=https://yourdomain.com
 APP_PORT=3000

@@ -44,11 +44,11 @@ sudo ufw allow 443
 sudo ufw --force enable
 
 # Create application directory
-sudo mkdir -p /opt/blcompiler
-sudo chown $USER:$USER /opt/blcompiler
+sudo mkdir -p /opt/placevalue
+sudo chown $USER:$USER /opt/placevalue
 
-echo "✅ System setup complete!"
-echo "📝 Next steps:"
-echo "1. Clone your repository to /opt/blcompiler"
+echo " System setup complete!"
+echo " Next steps:"
+echo "1. Clone your repository to /opt/placevalue"
 echo "2. Run: ./deployment/pm2-deploy.sh"
 echo "3. Configure your domain and SSL"

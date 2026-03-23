@@ -1,37 +1,37 @@
 #!/bin/bash
 
-# PM2 + Nginx Deployment Script for place value Portal Compiler
+# PM2 + Nginx Deployment Script for place value Portal 
 # Run this after pm2-nginx-setup.sh
 
 set -e
 
-echo "🚀 Deploying place value Portal Compiler with PM2 + Nginx..."
+echo " Deploying place value Portal  with PM2 + Nginx..."
 
 # Navigate to application directory
-cd /opt/blcompiler
+
 
 # Install dependencies
-echo "📦 Installing dependencies..."
+echo " Installing dependencies..."
 pnpm install
 
 # Build applications
-echo "🔨 Building applications..."
+echo "Building applications..."
 pnpm build
 
 # Create environment file
-echo "⚙️ Creating environment configuration..."
+echo " Creating environment configuration..."
 cat > .env << 'EOF'
 # Application
 NODE_ENV=production
-APP_NAME=place value Portal Compiler
+APP_NAME=place value Portal 
 APP_VERSION=1.0.0
 APP_URL=https://yourdomain.com
 APP_PORT=3000
 HOST=0.0.0.0
 
 # Database
-MONGODB_URI=mongodb://localhost:27017/blcompiler
-MONGODB_DB_NAME=blcompiler
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB_NAME=
 
 # Redis
 REDIS_HOST=localhost
@@ -69,21 +69,21 @@ REDIS_SESSION_MAX_PER_USER=5
 
 # Logging
 LOG_LEVEL=info
-LOG_DIR=/opt/blcompiler/logs
+
 EOF
 
 # Create logs directory
 mkdir -p logs
 
 # Create PM2 ecosystem file
-echo "📋 Creating PM2 ecosystem configuration..."
+echo " Creating PM2 ecosystem configuration..."
 cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [
     {
       name: 'api',
       script: 'apps/api/dist/index.js',
-      cwd: '/opt/blcompiler',
+
       instances: 'max',
       exec_mode: 'cluster',
       env: {
@@ -106,7 +106,7 @@ module.exports = {
     {
       name: 'worker',
       script: 'apps/worker/dist/index.js',
-      cwd: '/opt/blcompiler',
+    
       instances: 2,
       exec_mode: 'cluster',
       env: {
@@ -129,9 +129,9 @@ EOF
 
 # Create systemd service for PM2
 echo "🔧 Creating PM2 systemd service..."
-sudo tee /etc/systemd/system/pm2-blcompiler.service > /dev/null << 'EOF'
+sudo tee /etc/systemd/system/pm2-b.service > /dev/null << 'EOF'
 [Unit]
-Description=PM2 process manager for place value Portal Compiler
+Description=PM2 process manager for place value Portal
 Documentation=https://pm2.keymetrics.io/
 After=network.target mongodb.service redis.service
 
@@ -143,7 +143,7 @@ LimitNPROC=infinity
 LimitCORE=infinity
 Environment=PATH=/usr/bin:/usr/local/bin
 Environment=PM2_HOME=/home/ubuntu/.pm2
-ExecStart=/usr/local/bin/pm2-runtime start /opt/blcompiler/ecosystem.config.js
+ExecStart=/usr/local/bin/pm2-runtime start /opt/ecosystem.config.js
 ExecReload=/usr/local/bin/pm2 reload all
 ExecStop=/usr/local/bin/pm2 kill
 
@@ -153,7 +153,7 @@ EOF
 
 # Configure Nginx
 echo "🌐 Configuring Nginx..."
-sudo tee /etc/nginx/sites-available/blcompiler > /dev/null << 'EOF'
+sudo tee /etc/nginx/sites-available > /dev/null << 'EOF'
 # Rate limiting zones
 limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
 limit_req_zone $binary_remote_addr zone=auth:10m rate=5r/s;
@@ -235,7 +235,7 @@ server {
 
     # Static files (if any)
     location /static/ {
-        alias /opt/blcompiler/public/;
+        alias /opt/bl/public/;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -251,13 +251,13 @@ server {
     }
 
     # Logging
-    access_log /var/log/nginx/blcompiler_access.log;
-    error_log /var/log/nginx/blcompiler_error.log;
+    access_log /var/log/nginx/b_access.log;
+    error_log /var/log/nginx/placevalue_error.log;
 }
 EOF
 
 # Enable the site
-sudo ln -sf /etc/nginx/sites-available/blcompiler /etc/nginx/sites-enabled/
+sudo ln -sf /etc/nginx/sites-available /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 
 # Test Nginx configuration
@@ -265,7 +265,7 @@ sudo nginx -t
 
 # Reload systemd and start services
 sudo systemctl daemon-reload
-sudo systemctl enable pm2-blcompiler
+sudo systemctl enable 
 sudo systemctl enable nginx
 
 # Start PM2 services
@@ -273,21 +273,21 @@ pm2 start ecosystem.config.js
 pm2 save
 
 # Start systemd service
-sudo systemctl start pm2-blcompiler
+sudo systemctl start pm2-plavevalue
 sudo systemctl start nginx
 
 # Setup PM2 startup
 pm2 startup systemd -u $USER --hp $HOME
 
-echo "✅ Deployment complete!"
+echo "Deployment complete!"
 echo ""
-echo "🎉 Your application is now running!"
-echo "📊 Monitor with: pm2 monit"
-echo "📝 View logs with: pm2 logs"
-echo "🔄 Restart with: pm2 restart all"
+echo " Your application is now running!"
+echo " Monitor with: pm2 monit"
+echo " View logs with: pm2 logs"
+echo " Restart with: pm2 restart all"
 echo ""
-echo "🌐 Next steps:"
-echo "1. Update your domain in /opt/blcompiler/.env"
-echo "2. Update Nginx config: sudo nano /etc/nginx/sites-available/blcompiler"
+echo " Next steps:"
+echo "1. Update your domain in /opt/placevalue/.env"
+echo "2. Update Nginx config: sudo nano /etc/nginx/sites-available/placevalue"
 echo "3. Setup SSL: sudo certbot --nginx -d yourdomain.com"
 echo "4. Test your API: curl http://your-ec2-ip/health"

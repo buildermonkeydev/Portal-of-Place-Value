@@ -9,55 +9,30 @@ services:
     image: judge0/judge0:1.13.1
     volumes:
       - ./judge0.conf:/judge0.conf:ro
-      - box:/box
+    tmpfs:
+      - /box:uid=0,gid=0,mode=0777
     ports:
       - "2358:2358"
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=judge0
-      - POSTGRES_PASSWORD=supersecret
-      - POSTGRES_DB=judge0
-      - DATABASE_URL=postgresql://judge0:supersecret@db:5432/judge0
-      - RAILS_MAX_THREADS=5
-      - DISABLE_CGROUPS=true
-      - USE_CGROUPS=false
-      - CG_ENABLE=false
-      - ENABLE_COMPILE_OUTPUT=true
-      - MAX_COMPILE_OUTPUT_SIZE=65536
-      - ENABLE_STDERR=true
-      - MAX_STDERR_SIZE=65536
-      - ENABLE_MESSAGE=true
     privileged: true
     <<: *default-logging
     restart: always
+    depends_on:
+      - db
+      - redis
 
   workers:
     image: judge0/judge0:1.13.1
     command: ["./scripts/workers"]
     volumes:
       - ./judge0.conf:/judge0.conf:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - box:/box
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=judge0
-      - POSTGRES_PASSWORD=supersecret
-      - POSTGRES_DB=judge0
-      - DATABASE_URL=postgresql://judge0:supersecret@db:5432/judge0
-      - RAILS_MAX_THREADS=5
-      - DISABLE_CGROUPS=true
-      - USE_CGROUPS=false
-      - CG_ENABLE=false
-      - ENABLE_COMPILE_OUTPUT=true
-      - MAX_COMPILE_OUTPUT_SIZE=65536
-      - ENABLE_STDERR=true
-      - MAX_STDERR_SIZE=65536
-      - ENABLE_MESSAGE=true
+    tmpfs:
+      - /box:uid=0,gid=0,mode=0777
     privileged: true
     <<: *default-logging
     restart: always
+    depends_on:
+      - db
+      - redis
 
   db:
     image: postgres:16.2
@@ -79,4 +54,3 @@ services:
 
 volumes:
   data:
-  box:
